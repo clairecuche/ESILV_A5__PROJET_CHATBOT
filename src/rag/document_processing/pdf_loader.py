@@ -32,15 +32,8 @@ class PDFLoader:
     
     
     def load_pdf(self, pdf_path: str) -> List[Document]:
-        """
-        Charge un PDF et extrait son contenu
-        
-        Args:
-            pdf_path: Chemin vers le fichier PDF
-            
-        Returns:
-            Liste de Documents (un par page)
-        """
+        """Charge un PDF et extrait son contenu"""
+
         if not os.path.exists(pdf_path):
             raise FileNotFoundError(f"PDF not found: {pdf_path}")
         
@@ -92,15 +85,7 @@ class PDFLoader:
     
     
     def load_directory(self, directory_path: str) -> List[Document]:
-        """
-        Charge tous les PDFs d'un répertoire
-        
-        Args:
-            directory_path: Chemin vers le répertoire
-            
-        Returns:
-            Liste de tous les Documents extraits
-        """
+        """Charge tous les PDFs d'un répertoire"""
         all_documents = []
         pdf_files = list(Path(directory_path).glob("**/*.pdf"))
         
@@ -116,41 +101,6 @@ class PDFLoader:
         
         logger.info(f"Total documents extracted: {len(all_documents)}")
         return all_documents
-    
-    
-    def extract_metadata_only(self, pdf_path: str) -> Dict:
-        """
-        Extrait uniquement les métadonnées d'un PDF
-        
-        Args:
-            pdf_path: Chemin vers le fichier PDF
-            
-        Returns:
-            Dictionnaire des métadonnées
-        """
-        try:
-            pdf_document = fitz.open(pdf_path)
-            metadata = pdf_document.metadata
-            
-            result = {
-                "file_name": Path(pdf_path).name,
-                "file_size": os.path.getsize(pdf_path),
-                "total_pages": len(pdf_document),
-                "title": metadata.get("title", ""),
-                "author": metadata.get("author", ""),
-                "subject": metadata.get("subject", ""),
-                "creator": metadata.get("creator", ""),
-                "producer": metadata.get("producer", ""),
-                "creation_date": metadata.get("creationDate", ""),
-                "mod_date": metadata.get("modDate", "")
-            }
-            
-            pdf_document.close()
-            return result
-            
-        except Exception as e:
-            logger.error(f"Error extracting metadata: {e}")
-            return {}
 
 
 def main():
@@ -165,7 +115,7 @@ def main():
     loader = PDFLoader()
     
     # Remplacer par votre chemin
-    pdf_path = "ESILV_A5__PROJET_CHATBOT/data/pdf/Admission/Apprentissage.pdf"
+    pdf_path = "data/pdf/Admission/Apprentissage.pdf"
     
     if os.path.exists(pdf_path):
         documents = loader.load_pdf(pdf_path)
@@ -174,16 +124,13 @@ def main():
         print(f"\nMetadata: {documents[0].metadata}")
     
     # Exemple 2: Charger un répertoire complet
-    directory_path = "ESILV_A5__PROJET_CHATBOT/data/pdf/Admission"
+    directory_path = "data/pdf/Admission"
     
     if os.path.exists(directory_path):
         all_docs = loader.load_directory(directory_path)
         print(f"\nTotal documents from directory: {len(all_docs)}")
-    
-    # Exemple 3: Extraire seulement les métadonnées
-    if os.path.exists(pdf_path):
-        metadata = loader.extract_metadata_only(pdf_path)
-        print(f"\nPDF Metadata: {metadata}")
+        print(f"\nFirst document preview:\n{all_docs[2].content[:500]}...")
+        print(f"\nMetadata: {all_docs[0].metadata}")
 
 
 if __name__ == "__main__":
