@@ -1,4 +1,4 @@
-# rag/scraper/pdf_loader.py
+# rag/document_processing/pdf_loader.py
 
 import os
 from pathlib import Path
@@ -6,8 +6,7 @@ from typing import List, Dict, Optional
 import logging
 from dataclasses import dataclass
 
-# PDF processing with PyMuPDF
-import fitz  # PyMuPDF
+from pypdf import PdfReader
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +22,7 @@ class Document:
 
 class PDFLoader:
     """
-    Classe pour charger et extraire le texte des PDFs avec PyMuPDF
+    Classe pour charger et extraire le texte des PDFs avec pypdf
     """
     
     def __init__(self):
@@ -32,7 +31,7 @@ class PDFLoader:
     
     
     def load_pdf(self, pdf_path: str) -> List[Document]:
-        """Charge un PDF et extrait son contenu"""
+        """Charge un PDF et extrait son contenu ainsi que ses métadonnées"""
 
         if not os.path.exists(pdf_path):
             raise FileNotFoundError(f"PDF not found: {pdf_path}")
@@ -42,46 +41,54 @@ class PDFLoader:
         documents = []
         
         try:
-            pdf_document = fitz.open(pdf_path)
+            reader = PdfReader(pdf_path)
+            num_pages = len(reader.pages)
             
-            for page_num in range(len(pdf_document)):
-                page = pdf_document[page_num]
-                text = page.get_text()
+            # Extract overall PDF metadata once
+            pdf_info = reader.metadata
+            general_metadata = {
+                "title": pdf_info.get("/Title", ""),
+                "author": pdf_info.get("/Author", ""),
+                "subject": pdf_info.get("/Subject", ""),
+                "creator": pdf_info.get("/Creator", ""),
+                "producer": pdf_info.get("/Producer", ""),
+                "creation_date": pdf_info.get("/CreationDate", ""),
+                "mod_date": pdf_info.get("/ModDate", ""),
+            }
+            
+            for page_num in range(num_pages):
+                page = reader.pages[page_num]
+                text = page.extract_text()
+
+                # Extraction simple de tableau
+                if text:
+                    text = self.extract_tables_from_text(text)
                 
-                # Extraction des métadonnées
-                metadata = {
+                # Metadata for the current page
+                page_metadata = {
                     "source": pdf_path,
                     "page": page_num + 1,
-                    "total_pages": len(pdf_document),
+                    "total_pages": num_pages,
                     "file_name": Path(pdf_path).name
                 }
                 
-                # Ajout des métadonnées du document (première page seulement)
-                if page_num == 0 and pdf_document.metadata:
-                    metadata.update({
-                        "title": pdf_document.metadata.get("title", ""),
-                        "author": pdf_document.metadata.get("author", ""),
-                        "subject": pdf_document.metadata.get("subject", ""),
-                        "creator": pdf_document.metadata.get("creator", "")
-                    })
+                # Combine general PDF metadata with page-specific metadata
+                page_metadata.update(general_metadata)
                 
-                if text.strip():  # Ignorer les pages vides
-                    doc = Document(
+                documents.append(
+                    Document(
                         content=text,
-                        metadata=metadata,
+                        metadata=page_metadata,
                         source=pdf_path,
                         page_number=page_num + 1
                     )
-                    documents.append(doc)
+                )
             
-            pdf_document.close()
-            logger.info(f"Extracted {len(documents)} pages from {pdf_path}")
+            return documents
             
         except Exception as e:
-            logger.error(f"Error loading PDF: {e}")
-            raise
-        
-        return documents
+            logger.error(f"Error processing PDF {pdf_path}: {e}")
+            return []
     
     
     def load_directory(self, directory_path: str) -> List[Document]:
@@ -99,8 +106,32 @@ class PDFLoader:
                 logger.error(f"Failed to load {pdf_file}: {e}")
                 continue
         
-        logger.info(f"Total documents extracted: {len(all_documents)}")
+        logger.info(f"Total documents extracted (nb page): {len(all_documents)}")
         return all_documents
+    
+    def extract_tables_from_text(self, text: str) -> str:
+        """
+        Version simplifiée : détecte et reformate les tableaux basiques
+        
+        Détecte les lignes avec multiple espaces (colonnes) et les reformate
+        avec des séparateurs "|" clairs.
+        """
+        import re
+        
+        lines = text.split('\n')
+        result = []
+        
+        for line in lines:
+            # Détecter si c'est une ligne de tableau
+            # (au moins 2 séparations de 3+ espaces)
+            if re.findall(r'\s{3,}', line) and len(re.findall(r'\s{3,}', line)) >= 2:
+                # Remplacer espaces multiples par " | "
+                formatted = re.sub(r'\s{3,}', ' | ', line.strip())
+                result.append(formatted)
+            else:
+                result.append(line)
+        
+        return '\n'.join(result)
 
 
 def main():
@@ -113,23 +144,21 @@ def main():
     
     # Exemple 1: Charger un seul PDF
     loader = PDFLoader()
-    
-    # Remplacer par votre chemin
-    pdf_path = "data/pdf/Admission/Apprentissage.pdf"
+    pdf_path = "data\pdf\Autres\Contact_scolarite.pdf"
     
     if os.path.exists(pdf_path):
         documents = loader.load_pdf(pdf_path)
         print(f"\nLoaded {len(documents)} pages")
-        print(f"\nFirst page preview:\n{documents[1].content[:500]}...")
+        print(f"\nFirst page preview:\n{documents[0].content[:2000]}...")
         print(f"\nMetadata: {documents[0].metadata}")
     
     # Exemple 2: Charger un répertoire complet
-    directory_path = "data/pdf/Admission"
+    directory_path = "data/pdf/Programmes"
     
     if os.path.exists(directory_path):
         all_docs = loader.load_directory(directory_path)
         print(f"\nTotal documents from directory: {len(all_docs)}")
-        print(f"\nFirst document preview:\n{all_docs[2].content[:500]}...")
+        print(f"\nFirst document preview:\n{all_docs[0].content[:500]}...")
         print(f"\nMetadata: {all_docs[0].metadata}")
 
 
