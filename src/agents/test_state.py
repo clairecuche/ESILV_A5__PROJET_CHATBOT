@@ -53,3 +53,40 @@ for key, value in summary.items():
 
 print("\n" + "=" * 60)
 print("✅ Tous les tests passés !")
+
+
+# test_superviseur_complet.py
+from agent_orchestrateur import AgentSuperviseur
+import uuid
+
+print("🧪 Test interactif du Superviseur\n")
+
+superviseur = AgentSuperviseur()
+session_id = str(uuid.uuid4())
+
+messages_test = [
+    "Bonjour",
+    "Quels sont les programmes d'ingénieur ?",
+    "Je voudrais être contacté",
+    "Jean Dupont",
+    "jean@test.com"
+]
+
+for msg in messages_test:
+    print(f"\n{'='*60}")
+    print(f"👤 User: {msg}")
+    print(f"{'='*60}")
+    
+    try:
+        response = superviseur.run(msg, session_id)
+        print(f"🤖 Bot: {response}")
+    except Exception as e:
+        print(f"❌ Erreur: {e}")
+
+# Affiche les stats
+print(f"\n{'='*60}")
+print("📊 Statistiques de session:")
+print(f"{'='*60}")
+stats = superviseur.get_statistics(session_id)
+for key, value in stats.items():
+    print(f"  {key}: {value}")
