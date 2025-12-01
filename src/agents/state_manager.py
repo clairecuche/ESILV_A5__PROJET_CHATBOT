@@ -94,6 +94,12 @@ class StateManager:
         session = self.get_or_create_session(session_id)
         return session.form_data
     
+    def remove_form_data(self,field, session_id: str):
+        session = self.get_or_create_session(session_id)
+        session.form_data.pop(field)
+    
+
+
     def is_form_active(self, session_id: str) -> bool:
        
         session = self.get_or_create_session(session_id)

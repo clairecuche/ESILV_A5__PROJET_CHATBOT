@@ -1,11 +1,15 @@
 import uuid
 from state_manager import state_manager
 from agent_orchestrateur import AgentSuperviseur
+from agent_formulaire import AgentFormulaire
 print("🧪 Test interactif du Superviseur\n")
 
 superviseur = AgentSuperviseur()
 session_id = str(uuid.uuid4())
+agent = AgentFormulaire()
+test_session = str(uuid.uuid4())
 
+"""
 messages_test = [
     "Bonjour",
     "Quels sont les programmes d'ingénieur ?",
@@ -111,8 +115,7 @@ print("🧪 TESTS DE L'AGENT FORMULAIRE")
 print("="*60 + "\n")
 
 # Init
-agent = AgentFormulaire()
-test_session = str(uuid.uuid4())
+
 
 # Test 1: Extraction d'email
 print("📝 Test 1: Extraction d'email")
@@ -161,7 +164,7 @@ for i, msg in enumerate(conversation, 1):
 print("\n" + "="*60)
 print(f"✅ Tests terminés - {agent.get_contact_count()} contact(s) enregistré(s)")
 print("="*60 + "\n")
-
+"""
 def run_interactive_mode():
     """Run interactive console mode for testing"""
     print("\n" + "="*60)

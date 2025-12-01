@@ -73,12 +73,31 @@ class AgentFormulaire:
         # Récupère la session
         session = state_manager.get_or_create_session(session_id)
         form_data = session.form_data
+
         
         logger.info(f"État actuel du formulaire:")
         for field in self.required_fields:
             value = form_data.get(field)
             status = "✓" if value else "○"
             logger.info(f"  {status} {field}: {value if value else 'manquant'}")
+
+        # --- MODE ÉDITION D'UN CHAMP ---
+        if hasattr(session, 'editing_field') and session.editing_field:
+            field = session.editing_field
+            new_value = message.strip()
+
+            logger.info(f"Modification du champ '{field}' avec la valeur: {new_value}")
+
+            # Mise à jour direct du champ
+            state_manager.update_form_data(session_id, field, new_value)
+
+            # Sortie du mode édition
+            session.editing_field = None
+            session.awaiting_confirmation = True
+
+            # Retourne nouvelle confirmation
+            return self._generate_confirmation(session_id)
+
         
         # Cas 1 : Attente de confirmation
         if session.awaiting_confirmation:
@@ -120,7 +139,14 @@ class AgentFormulaire:
         else:
             # Formulaire incomplet → demande le prochain champ
             logger.info(f"Champs manquants: {missing}")
-            return self._ask_next_field(missing[0])
+            next_field = missing[0]
+            field_labels = {
+                'nom': 'votre nom complet',
+                'email': 'votre adresse email',
+                'telephone': 'votre numéro de téléphone',
+                'programme': 'le programme qui vous intéresse'
+            }
+            return f"Pour continuer, j'aurais besoin de {field_labels[next_field]} :"
     
     def _extract_info(self, message: str, session_id: str) -> dict:
         """
@@ -175,23 +201,37 @@ class AgentFormulaire:
                 logger.info(f"Programme détecté: {programme_name}")
                 break
         
-        # 4. Si aucune structure détectée et nom manquant → c'est probablement un nom
         if not extracted:
             form_data = state_manager.get_form_data(session_id)
             if not form_data.get('nom'):
-                # Considère le message comme un nom
-                # Mais seulement si ça ressemble à un nom (pas trop long, pas de chiffres partout)
-                if len(message_clean.split()) <= 4 and not message_clean.isdigit():
+                # Mots qui indiquent que ce n'est PAS un nom
+                non_name_keywords = [
+                    'je', 'veux', 'voudrais', 'aimerais', 'souhaite',
+                    'contact', 'contacté', 'appel', 'rappel', 'information',
+                    'brochure', 'renseignement', 'inscription'
+                ]
+                
+                # Si le message contient ces mots, ce n'est pas un nom
+                is_likely_name = not any(keyword in message_lower for keyword in non_name_keywords)
+                
+                # Et le message doit être court (max 4 mots) et sans chiffres
+                is_short_enough = len(message_clean.split()) <= 4
+                no_digits = not any(char.isdigit() for char in message_clean)
+                
+                if is_likely_name and is_short_enough and no_digits:
                     extracted['nom'] = message_clean
-                    logger.info(f" Message interprété comme nom: {extracted['nom']}")
+                    logger.info(f"✓ Message interprété comme nom: {extracted['nom']}")
+                else:
+                    logger.info(f"✗ Message non interprété comme nom (contient des mots-clés non-nom)")
         
         # 5. Si toujours rien et programme manquant, considère comme programme
         if not extracted:
             form_data = state_manager.get_form_data(session_id)
             if not form_data.get('programme') and form_data.get('nom'):
                 extracted['programme'] = message_clean
-                logger.info(f" Message interprété comme programme: {extracted['programme']}")
+                logger.info(f"✓ Message interprété comme programme: {extracted['programme']}")
         
+        return extracted
         return extracted
     
     def _validate_extracted_data(self, extracted: dict) -> dict:
@@ -328,64 +368,108 @@ class AgentFormulaire:
     
     def _handle_confirmation(self, message: str, session_id: str) -> str:
         """
-        Gère la réponse de l'utilisateur à la confirmation
+        Gère la réponse de confirmation de l'utilisateur
         
         Args:
             message: Réponse de l'utilisateur
-            session_id: ID de session
+            session_id: ID de la session
             
         Returns:
-            str: Message de réponse
+            str: Message de confirmation ou de modification
         """
-        message_lower = message.lower().strip()
+        logger.info(f"Traitement de la confirmation: '{message}'")
         
-        # Mots de confirmation
-        confirmation_words = ['oui', 'yes', 'ok', 'confirme', 'valide', 'correct', 'd\'accord']
+        # Récupère la session
+        session = state_manager.get_or_create_session(session_id)
+        form_data = session.form_data
         
-        # Mots de refus
-        refusal_words = ['non', 'no', 'pas', 'incorrect', 'faux']
-        
-        if any(word in message_lower for word in confirmation_words):
-            logger.info("Confirmation acceptée par l'utilisateur")
+        # Vérifie si on est en mode modification de champ
+        if hasattr(session, 'editing_field') and session.editing_field:
+            # Enregistre la nouvelle valeur pour le champ en cours d'édition
+            field = session.editing_field
+            session.form_data[field] = message.strip()
+            logger.info(f"Champ '{field}' modifié: {message.strip()}")
             
+            # Réinitialise le flag d'édition
+            session.editing_field = None
+            session.awaiting_confirmation = True
+            
+            # Redemande confirmation avec les nouvelles valeurs
+            return self._generate_confirmation(session_id)
+        
+        # Normalise la réponse
+        normalized = message.strip().lower()
+        
+        # Vérifie si c'est une confirmation
+        if normalized in ['oui', 'yes', 'ok', 'confirmé', 'confirmer', 'valider']:
             # Sauvegarde les données
-            success = self._save_contact(session_id)
-            
-            if success:
-                # Marque le formulaire comme complet
-                state_manager.mark_form_complete(session_id)
-                
-                # Réinitialise l'état
-                session = state_manager.get_or_create_session(session_id)
-                session.awaiting_confirmation = False
-                
-                logger.info("Contact sauvegardé avec succès")
-                return prompts.SUCCESS_MESSAGE
-            else:
-                logger.error("Échec de la sauvegarde")
-                return "Une erreur s'est produite lors de l'enregistrement. Nos équipes ont été notifiées."
-        
-        elif any(word in message_lower for word in refusal_words):
-            logger.info("Confirmation refusée, recommence le formulaire")
+            self._save_contact(session_id)
             
             # Réinitialise le formulaire
-            session = state_manager.get_or_create_session(session_id)
-            session.form_data = {
-                'nom': None,
-                'email': None,
-                'telephone': None,
-                'programme': None,
-                'message': None
-            }
+            session.form_completed = True
+            session.awaiting_confirmation = False
+            if hasattr(session, 'editing_field'):
+                session.editing_field = None
+            
+            return "Parfait ! Votre demande a bien été enregistrée. Un conseiller vous contactera bientôt."
+        
+        elif normalized in ['non', 'non merci', 'annuler', 'modifier']:
+            # Demande quel champ modifier
+            session.awaiting_confirmation = True
+            return "D'accord, quel champ souhaitez-vous modifier ? (nom, email, téléphone, programme)"
+        
+        field_map = {
+            # Variations pour téléphone
+            'téléphone': 'telephone',
+            'telephone': 'telephone',
+            'tel': 'telephone',
+            'tél': 'telephone',
+            'phone': 'telephone',
+            # Variations pour nom
+            'nom': 'nom',
+            'name': 'nom',
+            'prénom': 'nom',
+            'prenom': 'nom',
+            # Variations pour email
+            'email': 'email',
+            'mail': 'email',
+            'e-mail': 'email',
+            # Variations pour programme
+            'programme': 'programme',
+            'program': 'programme',
+            'formation': 'programme',
+            'cours': 'programme'
+        }
+        
+        if normalized in field_map:
+            field = field_map[normalized]
+            
+            # Passe en mode édition pour ce champ
+            session.editing_field = field
             session.awaiting_confirmation = False
             
-            return prompts.RESTART_FORM_MESSAGE
+            # Demande la nouvelle valeur
+            field_labels = {
+                'nom': 'votre nom complet',
+                'email': 'votre adresse email',
+                'telephone': 'votre numéro de téléphone',
+                'programme': 'le programme qui vous intéresse'
+            }
+            
+            current_value = form_data.get(field, 'non renseigné')
+            logger.info(f"✓ Mode édition activé pour le champ: {field}")
+            return f"Quelle est {field_labels[field]} ? (Actuel : {current_value})"
+        
         
         else:
-            # Réponse ambiguë, redemande
-            logger.warning(f"Réponse ambiguë: '{message}'")
-            return "Je n'ai pas bien compris. Confirmez-vous ces informations ? Répondez par 'oui' ou 'non'."
-    
+            # Réponse non reconnue, on redemande la confirmation
+            return (
+                "Je n'ai pas bien compris votre réponse. " +
+                "Veuillez :\n" +
+                "- Donner le nom du champ à modifier (nom, email, téléphone, programme)\n" +
+                "- Ou répondre 'oui' pour confirmer\n" +
+                "- Ou 'non' pour annuler"
+            )
     def _save_contact(self, session_id: str) -> bool:
         """
         Sauvegarde le contact dans le fichier JSON

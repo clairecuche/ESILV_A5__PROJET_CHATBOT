@@ -226,8 +226,10 @@ Classification (un seul mot) :"""
         
         Prend en compte :
         1. L'état de la session (formulaire en cours ?)
-        2. L'intention détectée par le LLM
-        3. Les règles métier (ex: formulaire prioritaire si actif)
+        2. Si une confirmation est en attente
+        3. Si un champ est en cours d'édition
+        4. L'intention détectée par le LLM
+        5. Les règles métier (ex: formulaire prioritaire si actif)
         
         Args:
             message: Message de l'utilisateur
@@ -240,30 +242,74 @@ Classification (un seul mot) :"""
         logger.info(f"ROUTING - Session: {session_id[:8]}...")
         logger.info(f"{'='*60}")
         
-        # RÈGLE 1 : Si un formulaire est déjà actif, on continue avec
-        if state_manager.is_form_active(session_id):
-            logger.info("RÈGLE 1: Formulaire en cours → continue avec Form Agent")
+        # Récupère l'état de la session
+        session = state_manager.get_or_create_session(session_id)
+    
+    
+        # Récupère le dernier message de l'assistant
+        last_assistant_message = None
+        if session.history and len(session.history) >= 1:
+            # On cherche le dernier message assistant
+            for msg in reversed(session.history):
+                if msg['role'] == 'assistant':
+                    last_assistant_message = msg['content']
+                    break
+        form_questions = [
+        'votre nom complet',
+        'votre adresse email',
+        'votre numéro de téléphone',
+        'le programme qui vous intéresse',
+        'Ces informations sont-elles correctes',
+        'quel champ souhaitez-vous modifier'
+    ]
+
+        if session.form_completed:
+            logger.info("Formulaire terminé, réinitialisation de l'état")
+            session.form_completed = False
+            session.current_agent = None  # Permet de revenir à l'agent par défaut
+            return "interaction"  # ou "rag" selon votre logique par défaut
+        
+        
+        if last_assistant_message and any(q in last_assistant_message for q in form_questions):
+            logger.info("RÈGLE 0: Question formulaire détectée dans message précédent → Agent Formulaire")
+            return "formulaire"
+        # RÈGLE 1 : Si une confirmation est en attente, on reste sur le formulaire
+        if session.awaiting_confirmation:
+            logger.info("RÈGLE 1: Confirmation en attente → reste sur l'agent Formulaire")
             return "formulaire"
         
-        # RÈGLE 2 : Détection d'intention avec LLM
+        # RÈGLE 2 : Si un champ est en cours d'édition, on reste sur le formulaire
+        if hasattr(session, 'editing_field') and session.editing_field:
+            logger.info(f"RÈGLE 2: Édition du champ {session.editing_field} → reste sur l'agent Formulaire")
+            return "formulaire"
+        if any(session.form_data.values()):
+            logger.info("RÈGLE 2.5: Formulaire partiel détecté → continue avec Form Agent")
+            return "formulaire"
+        
+        # RÈGLE 3 : Si un formulaire est déjà actif, on continue avec
+        if state_manager.is_form_active(session_id):
+            logger.info("RÈGLE 3: Formulaire en cours → continue avec Form Agent")
+            return "formulaire"
+        
+        # RÈGLE 4 : Détection d'intention avec LLM
         intent = self.detect_intent_with_llm(message)
         
-        # RÈGLE 3 : Mapping intention → agent
+        # RÈGLE 5 : Mapping intention → agent
         if intent == "mixed":
             # Pour MIXED : on commence par RAG, puis on active le formulaire
-            logger.info("RÈGLE 3: Intent MIXED → RAG d'abord, formulaire ensuite")
+            logger.info("RÈGLE 5: Intent MIXED → RAG d'abord, formulaire ensuite")
             return "rag"
         
         elif intent == "rag":
-            logger.info("RÈGLE 3: Intent RAG → Agent RAG")
+            logger.info("RÈGLE 5: Intent RAG → Agent RAG")
             return "rag"
         
         elif intent == "formulaire":
-            logger.info("RÈGLE 3: Intent FORMULAIRE → Agent Formulaire")
+            logger.info("RÈGLE 5: Intent FORMULAIRE → Agent Formulaire")
             return "formulaire"
         
         else:  # interaction
-            logger.info("RÈGLE 3: Intent INTERACTION → Agent Interaction")
+            logger.info("RÈGLE 5: Intent INTERACTION → Agent Interaction")
             return "interaction"
     
     def run(self, message: str, session_id: str) -> str:
@@ -289,7 +335,7 @@ Classification (un seul mot) :"""
             logger.info(f"\n{'#'*60}")
             logger.info(f"NOUVEAU MESSAGE")
             logger.info(f"   Session: {session_id[:8]}...")
-            logger.info(f"   Message: '{message[:100]}...'")
+            logger.info(f"   Message: '{message[:100]}{'...' if len(message) > 100 else ''}'")
             logger.info(f"{'#'*60}\n")
             
             # 1. Récupère l'état de la session
@@ -301,7 +347,7 @@ Classification (un seul mot) :"""
             # 3. Détermine quel agent utiliser
             agent_type = self.route(message, session_id)
             
-            # 4. Vérifie si c'était MIXED pour gérer l'enchaînement
+            # 4. Détecte l'intention pour gérer les cas MIXED
             intent = self.detect_intent_with_llm(message)
             is_mixed = (intent == "mixed")
             
@@ -316,17 +362,31 @@ Classification (un seul mot) :"""
                 else:
                     response = self.rag.run(message)
                 
-                # Si c'était MIXED, ajoute une invitation au formulaire
-                if is_mixed:
-                    logger.info("Intent MIXED détecté → ajout invitation formulaire")
+                # Si c'était MIXED, on active le formulaire pour la prochaine interaction
+                if is_mixed and not state_manager.is_form_active(session_id):
+                    logger.info("Intent MIXED détecté → activation du formulaire pour la prochaine interaction")
+                    # Réinitialise le formulaire si nécessaire
+                    if not session.form_data:
+                        session.form_data = {
+                            'nom': None,
+                            'email': None,
+                            'telephone': None,
+                            'programme': None,
+                            'message': None
+                        }
                     response += "\n\nJe vois que vous souhaitez également être contacté. Pouvons-nous prendre vos coordonnées ?"
-                    # Le prochain message sera routé vers le formulaire
             
             elif agent_type == "formulaire":
                 if self.form is None:
                     response = "Désolé, le service de contact est temporairement indisponible."
                 else:
                     response = self.form.run(message, session_id)
+                    
+                    # Si le formulaire est terminé, on réinitialise l'état
+                    if session.form_completed:
+                        logger.info("Formulaire terminé, réinitialisation de l'état")
+                        session.form_completed = False
+                        session.awaiting_confirmation = False
             
             else:  # interaction
                 if self.interact is None:
@@ -340,7 +400,7 @@ Classification (un seul mot) :"""
             logger.info(f"\n{'='*60}")
             logger.info(f"RÉPONSE GÉNÉRÉE")
             logger.info(f"   Longueur: {len(response)} caractères")
-            logger.info(f"   Aperçu: '{response[:100]}...'")
+            logger.info(f"   Aperçu: '{response[:100]}{'...' if len(response) > 100 else ''}'")
             logger.info(f"{'='*60}\n")
             
             return response
@@ -350,9 +410,10 @@ Classification (un seul mot) :"""
             logger.error(f"ERREUR CRITIQUE dans run()")
             logger.error(f"   Exception: {type(e).__name__}")
             logger.error(f"   Message: {str(e)}")
+            logger.error(f"   Session: {session_id[:8]}...")
+            logger.error(f"   Message: '{message[:100]}{'...' if len(message) > 100 else ''}'")
             logger.error(f"{'!'*60}\n")
             return "Désolé, une erreur s'est produite. Pouvez-vous reformuler votre demande ?"
-    
     def get_statistics(self, session_id: str) -> dict:
         return state_manager.get_session_summary(session_id)
 
