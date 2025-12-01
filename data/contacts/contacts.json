@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "nom": "Jean Dupont",
+    "email": "jean.dupont@test.com",
+    "telephone": "+33612345678",
+    "programme": "Data Science",
+    "message": null,
+    "created_at": "2025-12-01T11:47:09.592687",
+    "status": "nouveau",
+    "source": "chatbot",
+    "session_id": "b9d57f81"
+  },
+  {
+    "id": 2,
+    "nom": "Jean Dupont",
+    "email": "jean.dupont@test.com",
+    "telephone": "+33612345678",
+    "programme": "Data Science",
+    "message": null,
+    "created_at": "2025-12-01T14:06:13.106307",
+    "status": "nouveau",
+    "source": "chatbot",
+    "session_id": "e1deb384"
+  }
+]
