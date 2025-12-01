@@ -267,7 +267,7 @@ Classification (un seul mot) :"""
             logger.info("Formulaire terminé, réinitialisation de l'état")
             session.form_completed = False
             session.current_agent = None  # Permet de revenir à l'agent par défaut
-            return "interaction"  # ou "rag" selon votre logique par défaut
+            return self.detect_intent_with_llm(message)  # ou "rag" selon votre logique par défaut
         
         
         if last_assistant_message and any(q in last_assistant_message for q in form_questions):
