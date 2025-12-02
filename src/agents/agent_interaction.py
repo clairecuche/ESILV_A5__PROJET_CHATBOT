@@ -1,5 +1,4 @@
 # agent_interaction.py
-from state_manager import state_manager
 from ollama import Client
 import logging
 

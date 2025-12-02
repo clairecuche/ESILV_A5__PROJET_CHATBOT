@@ -9,8 +9,8 @@ Rôle :
 - Sauvegarder les contacts
 """
 
-from state_manager import state_manager
-from prompts import prompts, get_field_question, format_confirmation_message
+from src.agents.state_manager import state_manager
+from src.agents.prompts import prompts, get_field_question, format_confirmation_message
 from ollama import Client
 import logging
 import re

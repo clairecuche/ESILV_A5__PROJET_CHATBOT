@@ -9,11 +9,11 @@ Rôle :
 - Coordonne les réponses
 """
 
-from agent_rag import AgentRAG
-from agent_formulaire import AgentFormulaire
-from agent_interaction import AgentInteraction
-from state_manager import state_manager
-from prompts import prompts
+from src.agents.agent_rag import AgentRAG
+from src.agents.agent_formulaire import AgentFormulaire
+from src.agents.agent_interaction import AgentInteraction
+from src.agents.state_manager import state_manager
+from src.agents.prompts import prompts
 from ollama import Client
 import logging
 import time
