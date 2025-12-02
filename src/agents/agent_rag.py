@@ -1,6 +1,10 @@
 # agent_rag.py
 from ollama import Client
 
+# Configuration logging
+import logging
+logger = logging.getLogger(__name__)
+
 client = Client()
 
 class AgentRAG:

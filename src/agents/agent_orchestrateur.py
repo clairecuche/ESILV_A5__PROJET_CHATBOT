@@ -1,4 +1,4 @@
-# agent_superviseur.py
+# agent_superviseur.py 
 """
 Agent Superviseur - Coordinateur principal du système multi-agents
 
@@ -253,24 +253,19 @@ Classification (un seul mot) :"""
             for msg in reversed(session.history):
                 if msg['role'] == 'assistant':
                     last_assistant_message = msg['content']
+                    logger.info(f"Dernier message assistant: {last_assistant_message}")
                     break
         form_questions = [
         'votre nom complet',
-        'votre adresse email',
-        'votre numéro de téléphone',
         'le programme qui vous intéresse',
-        'Ces informations sont-elles correctes',
         'quel champ souhaitez-vous modifier'
     ]
 
         if session.form_completed:
             logger.info("Formulaire terminé, réinitialisation de l'état")
             session.form_completed = False
-            session.current_agent = None  # Permet de revenir à l'agent par défaut
-            return self.detect_intent_with_llm(message)  # ou "rag" selon votre logique par défaut
-        
-        
-        if last_assistant_message and any(q in last_assistant_message for q in form_questions):
+         
+        if last_assistant_message and any(q in last_assistant_message for q in form_questions) and session.form_completed==False:
             logger.info("RÈGLE 0: Question formulaire détectée dans message précédent → Agent Formulaire")
             return "formulaire"
         # RÈGLE 1 : Si une confirmation est en attente, on reste sur le formulaire

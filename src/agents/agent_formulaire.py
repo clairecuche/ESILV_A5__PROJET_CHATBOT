@@ -204,25 +204,33 @@ class AgentFormulaire:
         if not extracted:
             form_data = state_manager.get_form_data(session_id)
             if not form_data.get('nom'):
-                # Mots qui indiquent que ce n'est PAS un nom
+                # Mots qui indiquent clairement que ce n'est PAS un nom
                 non_name_keywords = [
-                    'je', 'veux', 'voudrais', 'aimerais', 'souhaite',
-                    'contact', 'contacté', 'appel', 'rappel', 'information',
-                    'brochure', 'renseignement', 'inscription'
+                    'je veux', 'je souhaite', 'je voudrais', 'je vais',
+                    'contact', 'contacte', 'contacté', 'appel', 'rappel', 
+                    'information', 'brochure', 'renseignement', 'inscription',
+                    'bonjour', 'salut', 'coucou', 'bonsoir', 'bon matin',
+                    's\'il vous plaît', 'stp', 'svp', 'merci', 'cordialement'
                 ]
                 
-                # Si le message contient ces mots, ce n'est pas un nom
+                # Vérifie si le message contient des mots qui indiquent clairement que ce n'est pas un nom
                 is_likely_name = not any(keyword in message_lower for keyword in non_name_keywords)
                 
-                # Et le message doit être court (max 4 mots) et sans chiffres
-                is_short_enough = len(message_clean.split()) <= 4
-                no_digits = not any(char.isdigit() for char in message_clean)
+                # Vérifie que le message n'est pas vide et ne contient pas de chiffres
+                is_valid = (
+                    message_clean.strip() and  # Pas vide
+                    not any(char.isdigit() for char in message_clean) and  # Pas de chiffres
+                    len(message_clean) >= 2 and  # Au moins 2 caractères
+                    len(message_clean) <= 100  # Pas trop long
+                )
                 
-                if is_likely_name and is_short_enough and no_digits:
-                    extracted['nom'] = message_clean
+                if is_likely_name and is_valid:
+                    # Capitalise correctement le nom (majuscule à chaque mot)
+                    formatted_name = ' '.join(word.capitalize() for word in message_clean.split())
+                    extracted['nom'] = formatted_name
                     logger.info(f"✓ Message interprété comme nom: {extracted['nom']}")
                 else:
-                    logger.info(f"✗ Message non interprété comme nom (contient des mots-clés non-nom)")
+                    logger.info("✗ Message non interprété comme nom")
         
         # 5. Si toujours rien et programme manquant, considère comme programme
         if not extracted:
@@ -232,7 +240,7 @@ class AgentFormulaire:
                 logger.info(f"✓ Message interprété comme programme: {extracted['programme']}")
         
         return extracted
-        return extracted
+
     
     def _validate_extracted_data(self, extracted: dict) -> dict:
         """
@@ -400,19 +408,31 @@ class AgentFormulaire:
         # Normalise la réponse
         normalized = message.strip().lower()
         
-        # Vérifie si c'est une confirmation
         if normalized in ['oui', 'yes', 'ok', 'confirmé', 'confirmer', 'valider']:
             # Sauvegarde les données
             self._save_contact(session_id)
             
-            # Réinitialise le formulaire
+            # RÉINITIALISE COMPLÈTEMENT LE FORMULAIRE
             session.form_completed = True
             session.awaiting_confirmation = False
+            
+            # VIDE TOUTES LES DONNÉES DU FORMULAIRE
+            session.form_data = {
+                'nom': None,
+                'email': None,
+                'telephone': None,
+                'programme': None,
+                'message': None
+            }
+            
+            # Supprime le flag d'édition si présent
             if hasattr(session, 'editing_field'):
                 session.editing_field = None
             
+            logger.info("✅ Formulaire complètement réinitialisé après sauvegarde")
+            
             return "Parfait ! Votre demande a bien été enregistrée. Un conseiller vous contactera bientôt."
-        
+            
         elif normalized in ['non', 'non merci', 'annuler', 'modifier']:
             # Demande quel champ modifier
             session.awaiting_confirmation = True

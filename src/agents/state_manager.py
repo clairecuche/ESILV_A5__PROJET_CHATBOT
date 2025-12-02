@@ -101,10 +101,25 @@ class StateManager:
 
 
     def is_form_active(self, session_id: str) -> bool:
-       
+        """
+        Vérifie si un formulaire est en cours
+        
+        Returns:
+            bool: True si formulaire actif
+        """
         session = self.get_or_create_session(session_id)
+        
+        # Un formulaire est actif seulement si :
+        # 1. Il a des données ET
+        # 2. Il n'est PAS complété ET
+        # 3. Il n'attend PAS de confirmation (car sinon il peut boucler)
         has_data = any(session.form_data.values())
-        return has_data and not session.form_completed
+        not_completed = not session.form_completed
+        
+        # Si en attente de confirmation, on considère toujours comme actif
+        is_active = has_data and not_completed
+        
+        return is_active
     
     def mark_form_complete(self, session_id: str):
         session = self.get_or_create_session(session_id)
