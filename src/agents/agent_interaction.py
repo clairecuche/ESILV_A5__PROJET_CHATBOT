@@ -10,8 +10,10 @@ logger = logging.getLogger(__name__)
 class AgentInteraction:
     def __init__(self):
         self.llm = ChatOllama(
-            model="mistral",
-            temperature=0.7
+            model="gemma2:2b", 
+            temperature=0.3,
+            num_predict=256,      # Limite tokens générés
+            num_ctx=2048          # Réduit contexte
         )
         
         self.prompt = ChatPromptTemplate.from_messages([

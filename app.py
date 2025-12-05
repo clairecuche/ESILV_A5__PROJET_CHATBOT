@@ -353,15 +353,16 @@ def main():
         send_button = st.button("📤 Envoyer", use_container_width=True)
     
     # Traitement du message
-    if send_button or user_input:
-        send_message(user_input)
-        st.rerun()
-    
-    # Gestion de la touche Entrée
+    # Gestion de la touche Entrée - vérifie d'abord si c'est un nouveau message
     if user_input and user_input != st.session_state.get('last_input', ''):
         st.session_state.last_input = user_input
+        send_message(user_input)
+        st.rerun()
 
-
+    # Gestion du bouton Envoyer (seulement si pas déjà traité par Entrée)
+    elif send_button and user_input:
+        send_message(user_input)
+        st.rerun()
 # Point d'entrée de l'application
 if __name__ == "__main__":
     main()

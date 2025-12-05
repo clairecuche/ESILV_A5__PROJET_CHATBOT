@@ -16,8 +16,12 @@ logger = logging.getLogger(__name__)
 
 class AgentFormulaire:
     def __init__(self):
-        self.llm = ChatOllama(model="mistral", temperature=0.0)
-        
+        self.llm = ChatOllama(
+            model="gemma2:2b", 
+            temperature=0.3,
+            num_predict=256,      # Limite tokens générés
+            num_ctx=2048          # Réduit contexte
+        )
         self.required_fields = ['nom', 'email', 'telephone', 'programme']
         
         self.contacts_file = Path("data/contacts/contacts.json")

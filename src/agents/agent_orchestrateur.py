@@ -44,7 +44,7 @@ class AgentSuperviseur:
             self.interact = None
         
         self.llm = ChatOllama(
-            model="mistral",
+            model="gemma2:2b", 
             temperature=0.0,
             num_predict=10
         )

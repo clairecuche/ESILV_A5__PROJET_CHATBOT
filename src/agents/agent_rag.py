@@ -9,7 +9,7 @@ client = Client()
 
 class AgentRAG:
     def __init__(self):
-        self.model = "mistral"
+        self.model = "gemma2:2b"
 
     def rag_search(self, query: str):
         # Placeholder, your friend will implement real RAG
