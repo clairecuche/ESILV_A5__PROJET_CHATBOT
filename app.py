@@ -353,7 +353,7 @@ def main():
         send_button = st.button("📤 Envoyer", use_container_width=True)
     
     # Traitement du message
-    if send_button and user_input:
+    if send_button or user_input:
         send_message(user_input)
         st.rerun()
     
