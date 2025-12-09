@@ -39,7 +39,7 @@ python -m src.rag.main_rag_lang stats
 - **Commandes utiles (récapitulatif)**
   - Indexer les PDFs :
     ```powershell
-    python -m src.rag.main_rag_lang index ./data/pdf/Admission
+    python -m src.rag.main_rag_lang index ./data/pdf/
     ```
   - Lancer le chat :
     ```powershell
