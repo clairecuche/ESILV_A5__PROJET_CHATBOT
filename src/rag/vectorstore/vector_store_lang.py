@@ -2,6 +2,7 @@ import os
 import logging
 from typing import List, Optional
 from pathlib import Path
+import re
 
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -74,5 +75,9 @@ class VectorStoreManager:
             logger.error("Vector store not loaded/initialized.")
             return []
         
-        results = self.vectorstore.similarity_search(query, k=top_k)
+        # Normalisation de la requête
+        normalized_query = re.sub(r'[?!.,;:\'\"]+', ' ', query)
+        normalized_query = re.sub(r'\s+', ' ', normalized_query).strip()
+        
+        results = self.vectorstore.similarity_search(normalized_query, k=top_k)
         return results

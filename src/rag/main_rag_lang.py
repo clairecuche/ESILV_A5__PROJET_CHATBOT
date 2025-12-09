@@ -44,14 +44,14 @@ def run_chat():
     # Le Retriever utilise directement le Manager chargé et n'a plus besoin d'EmbeddingsGenerator.
     retriever = Retriever(
         vector_store_manager=vector_store_manager, # Utilise l'index chargé
-        top_k=5,
-        similarity_threshold=0.4
-        # embeddings_generator est retiré
+        top_k=10,
+        final_k=4,
+        similarity_threshold=0.0
     )
     
     # 3. Initialisation du LLM (Ollama)
     llm = OllamaLLM(
-        model="mistral:latest",
+        model="gemma:latest",
         temperature=0.3,
         max_tokens=1000
     )

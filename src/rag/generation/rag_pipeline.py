@@ -26,18 +26,21 @@ class RAGPipeline:
     
     def _default_system_prompt(self) -> str:
         """Prompt système par défaut pour ESILV"""
-        return """Tu es un assistant intelligent pour l'école d'ingénieurs ESILV.
+        return """Tu es un assistant intelligent spécialisé pour l'école d'ingénieurs ESILV (École Supérieure d'Ingénieurs Léonard de Vinci).
 
-INSTRUCTIONS:
-- Réponds UNIQUEMENT en te basant sur le CONTEXTE fourni
-- Sois précis, factuel et professionnel
-- Si l'information n'est PAS dans le contexte, dis "Je n'ai pas cette information dans ma base de données"
-- Ne JAMAIS inventer d'informations
-- Utilise un ton amical mais professionnel
-- Réponds en français sauf si la question est en anglais
+RÈGLES IMPORTANTES:
+1. Base ta réponse UNIQUEMENT sur les informations présentes dans le CONTEXTE ci-dessous
+2. Si l'information est dans le contexte (même partiellement ou noyée dans un paragraphe), EXTRAIS-LA et formule une réponse claire
+3. Réponds de manière directe et précise à la question posée
+4. Si l'information est TOTALEMENT absente du contexte, dis: "Je n'ai pas trouvé cette information dans les documents fournis."
+5. Ne JAMAIS inventer ou déduire des informations qui ne sont pas explicitement mentionnées
+6. Utilise un ton professionnel mais amical
+7. Réponds en français
 
 CONTEXTE:
 {context}
+
+---
 
 QUESTION: {query}
 
@@ -45,40 +48,54 @@ RÉPONSE:"""
     
     def _format_context(self, chunks: List[Dict]) -> str:
         """
-        Formate les chunks récupérés en contexte
+        Formate les chunks récupérés en contexte structuré pour le LLM
+        
         Args:
-            chunks: Chunks récupérés
+            chunks: Liste de chunks avec leurs métadonnées et scores
+            
         Returns:
-            Contexte formaté
+            Contexte formaté et numéroté
         """
         if not chunks:
             return "Aucun contexte disponible."
         
         context_parts = []
+        
         for i, chunk in enumerate(chunks, 1):
-            source = chunk['metadata'].get('source', 'Inconnu')
-            score = chunk.get('similarity_score', 0)
+            # Récupération des métadonnées
+            source = chunk['metadata'].get('source', 'Document inconnu')
+            page = chunk['metadata'].get('page', 'N/A')
+            
+            # Récupération du score final 
+            final_score = chunk['scores']['final']
+            
+            # Nettoyage du contenu
             content = chunk['content'].strip()
             
+            # Format clair et structuré
             context_parts.append(
-                f"[Source {i}: {source} (Score: {score:.2f})]\n{content}\n"
+                f"--- DOCUMENT {i} ---\n"
+                f"Source: {source} | Page: {page} | Pertinence: {final_score:.2f}\n\n"
+                f"{content}\n"
             )
         
-        return "\n---\n".join(context_parts)
+        return "\n".join(context_parts)
     
     def query(
         self,
         user_query: str,
         return_sources: bool = True,
-        stream: bool = False
+        stream: bool = False,
+        debug: bool = False
     ) -> Dict:
         """
-        Execute une requête RAG complète
+        Exécute une requête RAG complète
         
         Args:
             user_query: Question de l'utilisateur
             return_sources: Retourner les sources utilisées
             stream: Streaming de la réponse
+            debug: Afficher le contexte envoyé au LLM
             
         Returns:
             Dictionnaire avec réponse et métadonnées
@@ -89,7 +106,10 @@ RÉPONSE:"""
         
         # 1. RETRIEVAL: Récupérer les chunks pertinents
         print("Phase 1: Récupération des documents...")
-        retrieved_chunks = self.retriever.retrieve_with_reranking(user_query)
+        retrieved_chunks = self.retriever.retrieve_with_reranking(
+            user_query, 
+            debug=debug
+        )
         
         if not retrieved_chunks:
             return {
@@ -98,10 +118,19 @@ RÉPONSE:"""
                 'num_chunks_used': 0
             }
         
-        # 2. FORMATTING: Créer le prompt
+        # 2. FORMATTING: Créer le contexte structuré
         print("Phase 2: Formatage du contexte...")
         context = self._format_context(retrieved_chunks)
         
+        # Debug: afficher le contexte exact envoyé au LLM
+        if debug:
+            print("\n" + "="*60)
+            print("CONTEXTE ENVOYÉ AU LLM:")
+            print("="*60)
+            print(context)
+            print("="*60 + "\n")
+        
+        # Construire le prompt complet
         prompt = self.system_prompt.format(
             context=context,
             query=user_query
@@ -121,20 +150,25 @@ RÉPONSE:"""
             response['sources'] = [
                 {
                     'source': chunk['metadata'].get('source', 'Inconnu'),
-                    'score': chunk.get('similarity_score', 0),
-                    'preview': chunk['content'][:200] + "..."
+                    'page': chunk['metadata'].get('page', 'N/A'),
+                    'final_score': chunk['scores']['final'],
+                    'vector_score': chunk['scores']['vector'],
+                    'lexical_score': chunk['scores']['lexical'],
+                    'preview': chunk['content'][:250] + "..." if len(chunk['content']) > 250 else chunk['content']
                 }
                 for chunk in retrieved_chunks
             ]
         
         return response
-    
-    def interactive_chat(self):
+        
+    def interactive_chat(self, debug: bool = False):
         """Mode chat interactif"""
         print("\n" + "="*60)
         print("  ESILV Smart Assistant - Mode Chat")
         print("="*60)
-        print("Tapez 'quit' pour quitter\n")
+        print("Commandes: 'quit' pour quitter, 'debug' pour toggle debug\n")
+        
+        current_debug = debug
         
         while True:
             user_input = input("  Vous: ").strip()
@@ -143,10 +177,21 @@ RÉPONSE:"""
                 print("  Au revoir!")
                 break
             
+            if user_input.lower() == 'debug':
+                current_debug = not current_debug
+                print(f"  🔧 Debug mode: {'ON' if current_debug else 'OFF'}\n")
+                continue
+            
             if not user_input:
                 continue
             
             # Traiter la requête
-            result = self.query(user_input, return_sources=False, stream=True)
+            result = self.query(
+                user_input, 
+                return_sources=False, 
+                stream=True,
+                debug=current_debug
+            )
             
-            print(f"\n  Chunks utilisés: {result['num_chunks_used']}\n")
+            print(f"\n  📚 {result['num_chunks_used']} chunks utilisés\n")
+    
