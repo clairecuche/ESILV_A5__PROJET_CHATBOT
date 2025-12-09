@@ -1,6 +1,5 @@
 import requests
 import json
-from typing import List, Dict, Optional
 
 class OllamaLLM:
     """
@@ -9,14 +8,14 @@ class OllamaLLM:
     
     def __init__(
         self,
-        model: str = "mistral:latest",
+        model: str = "gemma:latest",
         base_url: str = "http://localhost:11434",
         temperature: float = 0.3,
         max_tokens: int = 1000
     ):
         """
         Args:
-            model: Modèle Ollama (mistral, llama3, mixtral...)
+            model: Modèle Ollama (mistral, llama3, gemma, etc.)
             base_url: URL de l'API Ollama
             temperature: Créativité (0-1, bas = factuel)
             max_tokens: Longueur max de la réponse
@@ -48,11 +47,9 @@ class OllamaLLM:
     def generate(self, prompt: str, stream: bool = False) -> str:
         """
         Génère une réponse avec Ollama
-        
         Args:
             prompt: Prompt complet avec contexte
             stream: Streaming de la réponse
-            
         Returns:
             Réponse générée
         """
@@ -80,7 +77,7 @@ class OllamaLLM:
                         chunk = json_response.get('response', '')
                         full_response += chunk
                         print(chunk, end='', flush=True)
-                print()  # Nouvelle ligne à la fin
+                print()
                 return full_response
             else:
                 # Mode non-streaming

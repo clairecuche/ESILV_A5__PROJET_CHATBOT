@@ -1,6 +1,6 @@
 from typing import List, Dict, Optional
 from src.rag.generation.llm_handler import OllamaLLM
-from src.rag.generation.retriever import Retriever
+from src.rag.generation.retriever_lang import Retriever
 
 class RAGPipeline:
     """
@@ -46,10 +46,8 @@ RÉPONSE:"""
     def _format_context(self, chunks: List[Dict]) -> str:
         """
         Formate les chunks récupérés en contexte
-        
         Args:
             chunks: Chunks récupérés
-            
         Returns:
             Contexte formaté
         """
@@ -90,7 +88,7 @@ RÉPONSE:"""
         print(f"{'='*60}\n")
         
         # 1. RETRIEVAL: Récupérer les chunks pertinents
-        print("🔍 Phase 1: Récupération des documents...")
+        print("Phase 1: Récupération des documents...")
         retrieved_chunks = self.retriever.retrieve_with_reranking(user_query)
         
         if not retrieved_chunks:
@@ -101,7 +99,7 @@ RÉPONSE:"""
             }
         
         # 2. FORMATTING: Créer le prompt
-        print("  Phase 2: Formatage du contexte...")
+        print("Phase 2: Formatage du contexte...")
         context = self._format_context(retrieved_chunks)
         
         prompt = self.system_prompt.format(
@@ -110,7 +108,7 @@ RÉPONSE:"""
         )
         
         # 3. GENERATION: Générer la réponse
-        print("  Phase 3: Génération de la réponse...\n")
+        print("Phase 3: Génération de la réponse...\n")
         answer = self.llm.generate(prompt, stream=stream)
         
         # 4. FORMAT RESPONSE
