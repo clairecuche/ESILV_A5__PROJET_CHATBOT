@@ -32,7 +32,7 @@ SUGGESTED_QUESTIONS = {
     ],
     "programmes": [
         "🤖 Parlez-moi du programme Intelligence Artificielle",
-        "📊 Qu'est-ce que le programme Data Science ?",
+        "📊 Qu'est-ce que le programme de Finance ?",
         "🔒 Informations sur la Cybersécurité",
         "💻 Quelles sont les spécialisations disponibles ?",
     ],
@@ -51,12 +51,16 @@ SUGGESTED_QUESTIONS = {
 }
 
 PROGRAMMES = [
-    "Data Science",
+    "Data",
     "Intelligence Artificielle",
     "Cybersécurité",
     "Systèmes Embarqués",
     "FinTech",
-    "Génie Civil",
+    "Ingénierie Financière",
+    "Mecanique",
+    "Energie",
+    "Robotique",
+    "Santé",
     "Autre"
 ]
 
@@ -207,15 +211,28 @@ def get_suggestions_for_context(messages):
         return SUGGESTED_QUESTIONS["accueil"]
     
     last_messages = " ".join([m["content"].lower() for m in messages[-3:]])
-    
+    # Try to obtain the current agent from the supervisor's session summary.
+    agent = ""
+    try:
+        stats = st.session_state.supervisor.get_statistics(st.session_state.session_id)
+        agent = (stats.get('current_agent') or "").lower()
+    except Exception:
+        agent = ""
+
+    # Map stored agent keywords to suggestion categories
     if any(word in last_messages for word in ["programme", "formation", "cursus", "spécialisation"]):
         return SUGGESTED_QUESTIONS["programmes"]
     elif any(word in last_messages for word in ["admission", "inscription", "candidature", "concours"]):
         return SUGGESTED_QUESTIONS["admission"]
     elif any(word in last_messages for word in ["campus", "vie", "étudiant", "stage", "association"]):
         return SUGGESTED_QUESTIONS["vie_etudiante"]
-    else:
-        return SUGGESTED_QUESTIONS["accueil"]
+    elif agent:
+        if "form" in agent or "formulaire" in agent:
+            return SUGGESTED_QUESTIONS["admission"]
+        if "rag" in agent:
+            return SUGGESTED_QUESTIONS["vie_etudiante"]
+        if "interact" in agent or "interaction" in agent:
+            return SUGGESTED_QUESTIONS["programmes"]
 
 
 def display_header():

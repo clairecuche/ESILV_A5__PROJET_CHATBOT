@@ -118,6 +118,7 @@ class StateManager:
             del self.sessions[session_id]
             logger.info(f"✓ Session {session_id[:8]} réinitialisée")
     
+    
     def get_session_summary(self, session_id: str) -> Dict:
         session = self.get_or_create_session(session_id)
         return {
@@ -127,7 +128,7 @@ class StateManager:
             'current_agent': session.current_agent,
             'form_data': session.form_data,
             'awaiting_confirmation': session.awaiting_confirmation,
-            'editing_field': session.editing_field
+            'editing_field': session.editing_field,
         }
     
     def get_conversation_history(self, session_id: str, last_n: Optional[int] = None) -> List[Dict]:
@@ -135,6 +136,6 @@ class StateManager:
         if last_n:
             return session.history[-last_n:]
         return session.history
-
+    
 
 state_manager = StateManager()

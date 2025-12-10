@@ -218,6 +218,12 @@ class AgentSuperviseur:
             state_manager.add_to_history(session_id, "user", message)
             
             agent_type = self.route(message, session_id)
+            # Persist the chosen agent type in the conversation session so the UI
+            # and other components can access which agent handled the last request.
+            try:
+                session.current_agent = agent_type
+            except Exception:
+                logger.debug("Impossible de définir 'current_agent' sur la session")
             intent = self.detect_intent_with_llm(message)
             is_mixed = (intent == "mixed")
             

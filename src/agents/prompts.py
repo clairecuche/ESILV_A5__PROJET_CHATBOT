@@ -99,7 +99,7 @@ Informations à collecter (obligatoires) :
 - Nom complet
 - Email
 - Téléphone
-- Programme d'intérêt (Data Science, Cybersécurité, IA, Systèmes Embarqués, etc.)
+- Programme d'intérêt (Finance, Cybersécurité, IA, Systèmes Embarqués, etc.)
 
 Information optionnelle :
 - Message ou question spécifique
@@ -123,7 +123,7 @@ Assistant: "Merci Jean ! Quelle est votre adresse email ?"
         "nom": "Pour commencer, quel est votre nom complet ?",
         "email": "Parfait ! Quelle est votre adresse email ?",
         "telephone": "Merci ! Quel est votre numéro de téléphone ?",
-        "programme": "Quel programme vous intéresse ? (par exemple : Data Science, Cybersécurité, Intelligence Artificielle, Systèmes Embarqués...)"
+        "programme": "Quel programme vous intéresse ? (par exemple : Finance, Cybersécurité, Intelligence Artificielle, Systèmes Embarqués...)"
     }
     
     # Messages d'erreur pour la validation

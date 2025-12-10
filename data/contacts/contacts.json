@@ -250,5 +250,77 @@
     "status": "nouveau",
     "source": "chatbot",
     "session_id": "7b5a6fdb"
+  },
+  {
+    "id": 22,
+    "nom": "Claire Cuche",
+    "email": "tesr@hmao.com",
+    "telephone": "0613670979",
+    "programme": "Intelligence Artificielle",
+    "message": "",
+    "created_at": "2025-12-06T17:06:19.532705",
+    "status": "nouveau",
+    "source": "chatbot",
+    "session_id": "0b9cd11f"
+  },
+  {
+    "id": 23,
+    "nom": "Claire Cuche",
+    "email": "c.cuche03@gmail.com",
+    "telephone": "0613670979",
+    "programme": "Data Science",
+    "message": "",
+    "created_at": "2025-12-08T09:31:40.915806",
+    "status": "nouveau",
+    "source": "chatbot",
+    "session_id": "a3d8bfaf"
+  },
+  {
+    "id": 24,
+    "nom": "Claire Cuche",
+    "email": "test@gmzil.com",
+    "telephone": "0613670979",
+    "programme": "Data",
+    "message": "",
+    "created_at": "2025-12-09T19:32:05.178285",
+    "status": "nouveau",
+    "source": "chatbot",
+    "session_id": "1f5d8604"
+  },
+  {
+    "id": 25,
+    "nom": "Claire Cuche",
+    "email": "iugbc@ezomsdk.com",
+    "telephone": "0613670979",
+    "programme": "Data",
+    "message": "",
+    "created_at": "2025-12-09T19:38:05.469779",
+    "status": "nouveau",
+    "source": "chatbot",
+    "session_id": "b0a0fe49"
+  },
+  {
+    "id": 26,
+    "nom": "Claire Cuche",
+    "email": "jhv@dm.co",
+    "telephone": "0613670979",
+    "programme": "Data",
+    "message": "",
+    "created_at": "2025-12-10T16:07:34.099185",
+    "status": "nouveau",
+    "source": "chatbot",
+    "session_id": "9a2fea9a"
+  },
+  {
+    "id": 27,
+    "nom": "Claire Cuche",
+    "email": "jhbkn@k.lkj",
+    "telephone": "0613670979",
+    "programme": "Data",
+    "message": "",
+    "created_at": "2025-12-10T16:19:52.163166",
+    "status": "nouveau",
+    "source": "chatbot",
+    "session_id": "080fa084"
   }
 ]
