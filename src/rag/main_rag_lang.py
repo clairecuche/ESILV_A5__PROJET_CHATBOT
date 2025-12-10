@@ -9,16 +9,16 @@ from src.rag.vectorstore.vector_store_lang import VectorStoreManager # <-- Nouve
 FAISS_DIR = "vector_store_faiss"
 # -------------------------------------------
 
-def index_documents(pdf_directory: str):
+def index_documents(pdf_directory: str, web_directory: str ):
     """Indexe tous les PDFs en utilisant l'IndexingPipeline FAISS."""
     print("\n INDEXATION DES DOCUMENTS")
     print("="*60)
     
-    # 1. Mise à jour : L'IndexingPipeline utilise maintenant VectorStoreManager (FAISS)
-    pipeline = IndexingPipeline(pdf_directory=pdf_directory)
-    pipeline.process_all_pdfs()
+    # 1. L'IndexingPipeline utilise maintenant VectorStoreManager (FAISS)
+    pipeline = IndexingPipeline(pdf_directory=pdf_directory, web_data_directory=web_directory)
+    pipeline.run_indexing()
     
-    print("\n✅ Indexation terminée et sauvegardée localement!")
+    print("\n Indexation terminée et sauvegardée localement!")
 
 
 def run_chat():
@@ -122,12 +122,17 @@ def main():
     command = sys.argv[1]
     
     if command == "index":
-        if len(sys.argv) < 3:
-            print(" Spécifiez le dossier des PDFs")
-            print("Exemple: python -m src.rag.main_rag index ./data/brochures_esilv")
-            sys.exit(1)
-        pdf_directory = sys.argv[2]
-        index_documents(pdf_directory)
+        # Dossier PDF optionnel (défaut: data/pdf)
+        pdf_directory = sys.argv[2] if len(sys.argv) > 2 else "data/pdf"
+        
+        # Dossier web optionnel (défaut: data/autres)
+        web_directory = sys.argv[3] if len(sys.argv) > 3 else "data/scraping"
+        
+        print(f"> Indexation:")
+        print(f"   - PDFs: {pdf_directory}")
+        print(f"   - Web: {web_directory}")
+        
+        index_documents(pdf_directory, web_directory=web_directory)
     
     elif command == "chat":
         run_chat()
