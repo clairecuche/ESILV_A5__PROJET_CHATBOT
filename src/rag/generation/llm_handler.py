@@ -8,7 +8,7 @@ class OllamaLLM:
     
     def __init__(
         self,
-        model: str = "gemma:latest",
+        model: str = "gemma2:2b",
         base_url: str = "http://localhost:11434",
         temperature: float = 0.3,
         max_tokens: int = 1000
@@ -67,7 +67,7 @@ class OllamaLLM:
         
         try:
             response = requests.post(url, json=payload, stream=stream)
-            
+            print(f"   Statut Ollama: {response.status_code}")
             if stream:
                 # Mode streaming
                 full_response = ""
