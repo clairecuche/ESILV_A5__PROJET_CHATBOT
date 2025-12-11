@@ -13,7 +13,7 @@ class IndexingPipeline:
         self.web_data_directory = web_data_directory
         self.web_loader = WebScraperLoader(data_folder=web_data_directory)
         self.text_cleaner = TextCleaner()
-        self.chunker = OptimalChunker(chunk_size=500, chunk_overlap=50)
+        self.chunker = OptimalChunker(chunk_size=512, chunk_overlap=118)
         self.vector_store = VectorStoreManager()
     
     def process_all_pdfs1(self):

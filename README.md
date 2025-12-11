@@ -13,7 +13,16 @@ Dans un autre terminal:
 ollama pull gemma
 
 3. Indexer vos PDFs ESILV
-python -m src.rag.main_rag_lang index ./data/pdf/
+python -m src.rag.main_rag_lang index 
+
+> Indexer avec les dossiers par défaut (data/pdf + data/autres)
+python -m src.rag.main_rag index
+
+> Indexer seulement un dossier PDF personnalisé (web = data/autres)
+python -m src.rag.main_rag index ./mes_pdfs
+
+> Indexer avec les deux dossiers personnalisés
+python -m src.rag.main_rag index ./mes_pdfs ./mon_scraping
 
 4. Lancer le chatBot
 python -m src.rag.main_rag_lang chat
@@ -37,13 +46,19 @@ python -m src.rag.main_rag_lang stats
 <     ```
 
 - **Commandes utiles (récapitulatif)**
-  - Indexer les PDFs :
+  - Indexer les PDFs +web scraping complet :
     ```powershell
-    python -m src.rag.main_rag_lang index ./data/pdf/
+    python -m src.rag.main_rag_lang index 
     ```
   - Lancer le chat :
     ```powershell
     python -m src.rag.main_rag_lang chat
     ```
 
+se connecter à l'environnemnet virtuel python (toutes les dépendances)
 
+.venv\Scripts\Activate.ps1  
+
+Pour scrapper : python .\data\scrapper.py --full
+- Scrapping rapide : python scrapper.py 
+- Scrapping complet : python scrapper.py --full

@@ -51,7 +51,7 @@ def run_chat():
     
     # 3. Initialisation du LLM (Ollama)
     llm = OllamaLLM(
-        model="gemma:latest",
+        model="mistral:latest",
         temperature=0.3,
         max_tokens=1000
     )
