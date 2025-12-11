@@ -1,3 +1,4 @@
+
 Ollama
 streamlit==1.29.0
 python-dotenv==1.0.0
@@ -7,3 +8,5 @@ lxml==5.1.0
 
 PyMuPDF>=1.23.0
 
+pypdf==6.4.0
+langchain-text-splitters>=0.0.10
