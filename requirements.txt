@@ -4,9 +4,13 @@ streamlit==1.29.0
 python-dotenv==1.0.0
 requests==2.31.0
 beautifulsoup4==4.12.2
-lxml==5.1.0
+#lxml==5.2.1
+langchain_community
+sentence-transformers
 
 PyMuPDF>=1.23.0
+faiss_cpu 
+langchain_ollama
 
 pypdf==6.4.0
 langchain-text-splitters>=0.0.10
