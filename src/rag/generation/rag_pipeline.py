@@ -124,11 +124,11 @@ RÉPONSE:"""
         
         # Debug: afficher le contexte exact envoyé au LLM
         
-        print("\n" + "="*60)
-        print("CONTEXTE ENVOYÉ AU LLM:")
-        print("="*60)
-        print(context)
-        print("="*60 + "\n")
+       # print("\n" + "="*60)
+       # print("CONTEXTE ENVOYÉ AU LLM:")
+      #  print("="*60)
+      #  print(context)
+      #  print("="*60 + "\n")
         
         # Construire le prompt complet
         prompt = self.system_prompt.format(
