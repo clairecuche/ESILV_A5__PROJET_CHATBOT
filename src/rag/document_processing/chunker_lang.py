@@ -15,8 +15,7 @@ class OptimalChunker:
     def __init__(
         self,
         chunk_size: int = 512,      # Taille cible en tokens
-        chunk_overlap: int = 128,   # Overlap en tokens
-        model_name: str = "gpt-3.5-turbo" 
+        chunk_overlap: int = 128,   # Overlap en tokens 
     ):
 
         self.chunk_size_chars = chunk_size * 4

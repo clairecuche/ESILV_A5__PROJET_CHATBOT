@@ -45,7 +45,7 @@ class Retriever:
     
     def _normalize_text(self, text: str) -> str:
         """
-        Normalise le texte pour améliorer la recherche
+        Normalise le texte pour améliorer la recherche et préparer la requête
         """
         # Suppression de la ponctuation
         text = re.sub(r'[?!.,;:\'\"]+', ' ', text)

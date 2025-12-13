@@ -51,7 +51,7 @@ def run_chat():
     
     # 3. Initialisation du LLM (Ollama)
     llm = OllamaLLM(
-        model="gemma:latest",
+        model="gemma2:2b",
         temperature=0.3,
         max_tokens=1000
     )
@@ -111,7 +111,7 @@ def show_index_stats():
 
 def main():
     """Point d'entrée principal"""
-    # ... (le corps de main est conservé tel quel)
+    
     if len(sys.argv) < 2:
         print("Usage:")
         print(" python -m src.rag.main_rag index <pdf_directory> # Indexer les PDFs")
