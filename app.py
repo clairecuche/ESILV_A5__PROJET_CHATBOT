@@ -5,6 +5,7 @@ from datetime import datetime
 import uuid
 import json
 from pathlib import Path
+import re
 
 st.set_page_config(
     page_title="Chatbot ESILV",
@@ -201,6 +202,9 @@ def init_session_state():
     
     if 'last_input' not in st.session_state:
         st.session_state.last_input = ""
+
+    if 'input_value_control' not in st.session_state:
+        st.session_state.input_value_control = ""
     
     if 'show_form' not in st.session_state:
         st.session_state.show_form = False
@@ -324,6 +328,7 @@ def display_suggestions():
                     st.rerun()
                 else:
                     send_message(clean_question)
+                    st.session_state.input_value_control = ""
                     st.rerun()
     
     st.markdown('</div>', unsafe_allow_html=True)
@@ -471,6 +476,10 @@ def display_chat_history():
             </div>
             """, unsafe_allow_html=True)
 
+def clean_response(response: str) -> str:
+    """Nettoie la réponse en retirant les balises HTML non désirées en fin de chaîne."""
+    # Supprime la balise </div> si elle est seule en fin de chaîne
+    return re.sub(r'\s*</div>\s*$', '', response).strip()
 
 def send_message(user_input: str):
     if not user_input.strip():
@@ -497,10 +506,12 @@ def send_message(user_input: str):
                 message=user_input,
                 session_id=st.session_state.session_id
             )
+
+            cleaned_response = clean_response(response)
             
             st.session_state.messages.append({
                 "role": "assistant",
-                "content": response,
+                "content": cleaned_response,
                 "timestamp": datetime.now().isoformat()
             })
             
@@ -556,11 +567,11 @@ def main():
             welcome_message = """
             👋 Bonjour ! Je suis l'assistant virtuel de l'ESILV.
             
-            Je suis là pour vous aider à :
-            • 📚 Découvrir nos programmes et formations
-            • 📝 Vous renseigner sur les admissions
-            • 📞 Être mis en contact avec un conseiller
-            • ❓ Répondre à toutes vos questions
+            Je suis là pour vous aider à :\n
+            • 📚 Découvrir nos programmes et formations\n
+            • 📝 Vous renseigner sur les admissions\n
+            • 📞 Être mis en contact avec un conseiller\n
+            • ❓ Répondre à toutes vos questions\n
             
             Comment puis-je vous aider aujourd'hui ?
             """
@@ -582,30 +593,12 @@ def main():
         
         st.markdown("---")
         
-        col1, col2 = st.columns([6, 1])
+        user_input = st.chat_input("Tapez votre message ici...")
         
-        with col1:
-            user_input = st.text_input(
-                "Votre message",
-                key="user_input",
-                placeholder="Tapez votre message ici...",
-                label_visibility="collapsed"
-            )
-        
-        with col2:
-            send_button = st.button("📤 Envoyer", use_container_width=True)
-        
-        is_new_message = user_input and user_input != st.session_state.last_input
-        
-        if is_new_message:
-            st.session_state.last_input = user_input
+        # Traiter le message si l'utilisateur a envoyé quelque chose
+        if user_input:
             send_message(user_input)
             st.rerun()
-        elif send_button and user_input:
-            st.session_state.last_input = user_input
-            send_message(user_input)
-            st.rerun()
-
 
 if __name__ == "__main__":
     main()
