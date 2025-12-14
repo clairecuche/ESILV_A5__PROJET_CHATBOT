@@ -23,9 +23,9 @@ class AgentRAG:
         self,
         model: str = "gemma2:2b",
         index_directory: str = "vector_store_faiss",
-        top_k: int = 10,
-        final_k: int = 4,
-        temperature: float = 0.3,
+        top_k: int = 20,
+        final_k: int = 5,
+        temperature: float = 0.1,
     ):
         self.model = model
         self.index_directory = index_directory
@@ -53,7 +53,7 @@ class AgentRAG:
                 vector_store_manager=self.vector_store,
                 top_k=self.top_k,
                 final_k=self.final_k,
-                similarity_threshold=0.0,
+                similarity_threshold=0.7,
             )
 
             # Init LLM handler
@@ -67,7 +67,7 @@ class AgentRAG:
 
         except Exception as e:
             logger.error(f"✗ Erreur initialisation Agent RAG: {e}")
-            logger.info("💡 Indexez vos PDFs: python -m src.rag.main_rag_lang index ./data/pdf/")
+            logger.info("💡 Indexez vos PDFs: python -m src.rag.main_rag_lang index ")
             self.rag_ready = False
 
     def rag_search(self, query: str):
@@ -88,8 +88,8 @@ class AgentRAG:
         if not self.rag_ready or not self.rag_pipeline:
             return (
                 "Le système de recherche documentaire n'est pas encore configuré.\n\n"
-                "Pour l'activer, indexez vos documents PDF :\n"
-                "python -m src.rag.main_rag_lang index ./data/pdf/\n\n"
+                "Pour l'activer, indexez vos documents :\n"
+                "python -m src.rag.main_rag_lang index \n\n"
                 "En attendant, **souhaitez-vous être contacté par un conseiller ?**"
             )
 
@@ -105,15 +105,28 @@ class AgentRAG:
             answer = result.get("answer", "")
             sources = result.get("sources", [])
 
-            # Format response with sources (short list)
+            web_sources = []
+            for src in sources:
+                src_name = src.get("source", "")
+                
+                # Convertir Path en string si nécessaire
+                if isinstance(src_name, Path):
+                    src_name = str(src_name)
+                
+                # Garder uniquement les URLs web (commence par http:// ou https://)
+                if isinstance(src_name, str) and (src_name.startswith('http://') or src_name.startswith('https://')):
+                    if src_name not in web_sources:  # Éviter les doublons
+                        web_sources.append(src_name)
+                        break
+
+            # Format response with web sources only
             response = answer.strip()
-            if sources:
+            
+            # Afficher les sources seulement s'il y a des liens web
+            if web_sources:
                 response += "\n\n📚 Sources :\n"
-                for i, src in enumerate(sources[:3], start=1):
-                    src_name = src.get("source", "Document")
-                    if isinstance(src_name, Path):
-                        src_name = src_name.name
-                    response += f"{i}. {src_name}\n"
+                for i, url in enumerate(web_sources, start=1):
+                    response += f"{i}. {url}\n"
 
             return response
 

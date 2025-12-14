@@ -11,8 +11,8 @@ class Retriever:
     def __init__(
         self,
         vector_store_manager: VectorStoreManager, 
-        top_k: int = 10,
-        final_k: int = 4,
+        top_k: int = 20,
+        final_k: int = 5,
         similarity_threshold: float = 0.0,
         # Poids configurables pour le reranking
         weights: Optional[Dict[str, float]] = None

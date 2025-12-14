@@ -207,7 +207,7 @@ Pourriez-vous préciser si vous souhaitez :
     INTERACTION_GOODBYE = "Au revoir ! N'hésitez pas à revenir si vous avez des questions. Bonne journée ! 👋"
 
     # ========================================================================
-    # PROMPTS POUR L'AGENT RAG (ton amie)
+    # PROMPTS POUR L'AGENT RAG 
     # ========================================================================
     
     RAG_SYSTEM_PROMPT = """Tu es un assistant virtuel expert de l'école d'ingénieurs ESILV.
@@ -224,10 +224,16 @@ Règles importantes :
 4. Reste professionnel mais chaleureux
 5. Si pertinent, suggère à l'utilisateur d'être contacté pour plus de détails
 
+Règles de citation des sources :
+- CITE la source UNIQUEMENT si c'est un lien web (commence par http:// ou https://)
+- N'affiche JAMAIS les chemins de fichiers internes (ex: data//pdf//..., //documents//...)
+- Format pour les liens web : "Source : [URL]" ou "Plus d'infos : [URL]"
+- Si toutes les sources sont des fichiers internes, ne mentionne aucune source
+
 Format de réponse :
 - Réponds de manière claire et structurée
 - Utilise des listes à puces si approprié
-- Cite la source à la fin si possible (ex: "Source: Brochure ESILV 2024")
+- Place les liens web sources à la fin de ta réponse si applicable
 """
 
     # Template pour construire le prompt RAG complet
