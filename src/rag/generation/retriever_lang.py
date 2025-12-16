@@ -30,7 +30,6 @@ class Retriever:
         self.final_k = final_k
         self.similarity_threshold = similarity_threshold
         
-        # Poids par défaut optimisés pour contexte éducatif
         self.weights = weights or {
             'vector': 0.55,    # Sémantique prioritaire mais équilibrée
             'lexical': 0.30,   # Termes exacts importants (noms de cours, profs)
@@ -97,16 +96,14 @@ class Retriever:
         """
         content_words = self._normalize_text(content).split()
         
-        # Positions de tous les mots qui matchent un terme
         term_positions = []
         for i, word in enumerate(content_words):
             if any(term in word for term in query_terms):
                 term_positions.append(i)
         
         if len(term_positions) < 2:
-            return len(term_positions)  # 0 ou 1
+            return len(term_positions)
         
-        # Compacité: ratio du nombre de matches sur l'étendue
         term_positions.sort()
         span = term_positions[-1] - term_positions[0] + 1
         return min(len(term_positions) / span, 1.0)
@@ -115,7 +112,6 @@ class Retriever:
         """
         Score de longueur avec courbe gaussienne autour d'une longueur idéale
         """
-        # Longueur idéale: 8-15x la requête (entre 40 et 200 mots)
         ideal_min = max(40, query_length * 8)
         ideal_max = max(100, query_length * 15)
         ideal_mid = (ideal_min + ideal_max) / 2

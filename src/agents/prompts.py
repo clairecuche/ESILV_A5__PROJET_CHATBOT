@@ -253,7 +253,7 @@ QUESTION: {query}
 
 RÉPONSE (avec citations [1], [2], etc.) :"""
 
-    # Template pour construire le prompt RAG complet (legacy, non utilisé avec le nouveau système)
+    # Template pour construire le prompt RAG complet 
     RAG_PROMPT_TEMPLATE = """Contexte (documents pertinents) :
 {context}
 
@@ -262,7 +262,6 @@ Question de l'utilisateur : {question}
 Réponds à la question en te basant uniquement sur le contexte ci-dessus.
 Si l'information n'est pas dans le contexte, dis-le clairement.
 """
-
 
 # ========================================================================
 # INSTANCE GLOBALE

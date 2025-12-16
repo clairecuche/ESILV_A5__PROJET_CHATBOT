@@ -88,7 +88,6 @@ class AgentRAG:
     def _extract_used_sources(self, answer: str, all_sources: list) -> list:
         """
         Extrait les sources réellement citées dans la réponse du LLM.
-        
         Stratégie : Se fier UNIQUEMENT aux citations explicites [1], [2], etc.
         """
         used_sources = []
@@ -139,13 +138,11 @@ class AgentRAG:
             answer = result.get("answer", "")
             all_sources = result.get("sources", [])
 
-            # Extraire les sources utilisées (seulement celles citées)
+            # Extraire les sources utilisées
             used_sources = self._extract_used_sources(answer, all_sources)
-
-            # ✅ NETTOYAGE COMPLET de la réponse
             clean_answer = answer
             
-            # 1. Supprimer les citations numériques [1], [2]...
+            # 1. Supprimer les citations numériques [1], [2]
             clean_answer = re.sub(r'\[\d+\]', '', clean_answer)
             
             # 2. Supprimer les URLs complètes (web et chemins de fichiers)
@@ -169,7 +166,7 @@ class AgentRAG:
             ]:
                 return self._no_answer_response()
 
-            # ✅ Filtrer UNIQUEMENT les URLs web (exclure les PDFs)
+            # Filtrer uniquement les URLs web (exclure les PDFs)
             web_sources = []
             for src in used_sources:
                 src_name = src.get("source", "")
@@ -178,20 +175,17 @@ class AgentRAG:
                 if isinstance(src_name, Path):
                     src_name = str(src_name)
                 
-                # ✅ Garder UNIQUEMENT les vraies URLs web (pas les chemins de fichiers)
+                # Garder uniquement les sources web
                 if isinstance(src_name, str):
-                    # Vérifier que c'est une URL web ET qu'elle ne contient pas "data\pdf" ou "\pdf\"
                     is_web_url = (src_name.startswith('http://') or src_name.startswith('https://'))
                     is_not_file_path = 'data\\' not in src_name and '\\pdf\\' not in src_name and '.pdf' not in src_name
                     
                     if is_web_url and is_not_file_path:
-                        if src_name not in web_sources:  # Éviter les doublons
+                        if src_name not in web_sources: 
                             web_sources.append(src_name)
 
-            # Format response
             response = clean_answer
             
-            # ✅ Afficher les sources UNIQUEMENT s'il y a des liens web valides
             if web_sources:
                 response += "\n\n📚 Source" + ("s" if len(web_sources) > 1 else "") + " :\n"
                 for i, url in enumerate(web_sources, start=1):
