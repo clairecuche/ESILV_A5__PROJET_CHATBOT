@@ -39,3 +39,11 @@ python-dotenv>=1.0.0
 
 # === Optional (pour Ollama local) ===
 ollama>=0.0.1
+
+# API Flask pour le widget chatbot
+flask==3.0.0
+flask-cors==4.0.0
+gunicorn==21.2.0  # Pour le déploiement en production
+
+# Rate limiting (optionnel mais recommandé)
+flask-limiter==3.5.0

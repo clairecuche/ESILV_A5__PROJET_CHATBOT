@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESILV - École d'Ingénieurs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23667eea" width="1200" height="600"/></svg>');
+            background-size: cover;
+            color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            background: white;
+            color: #667eea;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Content Sections */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        /* Chatbot Widget */
+        #chatbot-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        #chatbot-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #chatbot-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        #chatbot-button.open {
+            background: #e74c3c;
+        }
+
+        #chatbot-popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 400px;
+            height: 85vh;
+            max-height: 90vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        #chatbot-popup.maximized {
+            width: 90vw; /* Utilise 90% de la largeur de la vue */
+            height: 90vh; /* Utilise 90% de la hauteur de la vue */
+            bottom: 5vh; /* Centre verticalement */
+            right: 5vw;  /* Centre horizontalement */
+            max-width: 1400px; /* Limite la taille sur les très grands écrans */
+        }
+        .chatbot-header-actions {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+            transition: opacity 0.3s;
+        }
+
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+
+        #chatbot-popup.active {
+            display: flex;
+        }
+
+        
+        /* Nouvelle classe pour masquer les éléments (interface de chat ou formulaire) */
+        .interface-container {
+            height: calc(100% - 130px); /* Hauteur calculée (100% - hauteur du header) */
+            display: flex; /* Permet un bon agencement interne */
+            flex-direction: column;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .chatbot-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .chatbot-header p {
+            margin: 0.5rem 0 0 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        #chatbot-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            text-align: right;
+        }
+
+        .message.bot {
+            text-align: left;
+        }
+
+        .message-content {
+            display: inline-block;
+            padding: 0.8rem 1.2rem;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-content {
+            background: #667eea;
+            color: white;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .suggestion-btn {
+            background: white;
+            border: 1px solid #667eea;
+            color: #667eea;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .suggestion-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .chatbot-input-container {
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chatbot-input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        #chatbot-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        #chatbot-input:focus {
+            border-color: #667eea;
+        }
+
+        #chatbot-send {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background 0.3s;
+        }
+
+        #chatbot-send:hover {
+            background: #5568d3;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 0.8rem 1.2rem;
+            background: white;
+            border-radius: 18px;
+            width: fit-content;
+            border: 1px solid #e0e0e0;
+        }
+
+        .typing-indicator.active {
+            display: block;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        @media (max-width: 768px) {
+            #chatbot-popup {
+                width: calc(100vw - 40px);
+                height: calc(100vh - 120px);
+                right: 20px;
+                bottom: 90px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            nav ul {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">🎓 ESILV</div>
+            <ul>
+                <li><a href="#programmes">Programmes</a></li>
+                <li><a href="#admissions">Admissions</a></li>
+                <li><a href="#campus">Campus</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>École d'Ingénieurs ESILV</h1>
+        <p>Formez-vous aux technologies du futur</p>
+        <button class="cta-button" onclick="openChatbot()">Discuter avec notre assistant 💬</button>
+    </section>
+
+    <!-- Content -->
+    <div class="container">
+        <section class="section" id="programmes">
+            <h2>Nos Programmes</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>🤖 Data & IA</h3>
+                    <p>Devenez expert en Intelligence Artificielle et Data Science. Apprenez le Machine Learning, Deep Learning et l'analyse de données.</p>
+                </div>
+                <div class="card">
+                    <h3>🔒 Cybersécurité</h3>
+                    <p>Protégez les systèmes informatiques contre les menaces. Formation complète en sécurité des réseaux et cryptographie.</p>
+                </div>
+                <div class="card">
+                    <h3>💰 FinTech</h3>
+                    <p>Innovez dans la finance digitale. Blockchain, trading algorithmique et technologies financières.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="admissions">
+            <h2>Admissions</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>📝 Post-Bac</h3>
+                    <p>Intégrez notre école directement après le bac via le concours Avenir.</p>
+                </div>
+                <div class="card">
+                    <h3>🎓 Admissions Parallèles</h3>
+                    <p>Rejoignez-nous après une prépa, un BTS ou un DUT.</p>
+                </div>
+                <div class="card">
+                    <h3>🌍 International</h3>
+                    <p>Programmes ouverts aux étudiants internationaux.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 ESILV - École d'Ingénieurs. Tous droits réservés.</p>
+        <p>12 Avenue Léonard de Vinci, 92400 Courbevoie</p>
+    </footer>
+
+    <!-- Chatbot Widget -->
+    <div id="chatbot-widget">
+        <button id="chatbot-button" onclick="toggleChatbot()">💬</button>
+        <div id="chatbot-popup">
+            <div class="chatbot-header">
+                <div class="chatbot-header-actions">
+                    <button id="maximize-btn" class="action-btn" onclick="toggleMaximize()">⛶</button>
+                    </div>
+                <h3>🎓 Assistant ESILV</h3>
+                <p>Posez-moi vos questions</p>
+            </div>
+            <div id="chatbot-messages">
+                <!-- Messages will be added here -->
+            </div>
+            <div class="chatbot-input-container">
+                <div class="chatbot-input-wrapper">
+                    <input 
+                        type="text" 
+                        id="chatbot-input" 
+                        placeholder="Tapez votre message..."
+                        onkeypress="handleKeyPress(event)"
+                    >
+                    <button id="chatbot-send" onclick="sendMessage()">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sessionId = generateSessionId();
+        let isOpen = false;
+
+        // Initialize chatbot with welcome message
+        window.onload = function() {
+            addBotMessage(
+                "👋 Bonjour ! Je suis l'assistant virtuel de l'ESILV.\n\n" +
+                "Je peux vous aider à :\n" +
+                "• 📚 Découvrir nos programmes\n" +
+                "• 📝 En savoir plus sur les admissions\n" +
+                "• 📞 Être mis en contact avec un conseiller\n\n" +
+                "Comment puis-je vous aider ?",
+                [
+                    "Quels sont les programmes disponibles ?",
+                    "Comment s'inscrire ?",
+                    "Je souhaite être contacté",
+                    "Informations sur la Cybersécurité"
+                ]
+            );
+        };
+
+        function generateSessionId() {
+            return 'session_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function toggleChatbot() {
+            const popup = document.getElementById('chatbot-popup');
+            const button = document.getElementById('chatbot-button');
+            
+            isOpen = !isOpen;
+            popup.classList.toggle('active');
+            button.classList.toggle('open');
+            button.textContent = isOpen ? '✕' : '💬';
+
+            if (isOpen) {
+                document.getElementById('chatbot-input').focus();
+            }
+        }
+
+        function openChatbot() {
+            if (!isOpen) {
+                toggleChatbot();
+            }
+        }
+
+        function toggleMaximize() {
+            const popup = document.getElementById('chatbot-popup');
+            const maximizeBtn = document.getElementById('maximize-btn');
+            
+            // Bascule la classe 'maximized'
+            const isMaximized = popup.classList.toggle('maximized');
+
+            // Change l'icône du bouton en conséquence
+            if (isMaximized) {
+                // Icône pour RESTAURER la fenêtre
+                maximizeBtn.textContent = '🗗'; // Icône Restore
+                maximizeBtn.title = 'Réduire la fenêtre';
+            } else {
+                // Icône pour AGRANDIR la fenêtre
+                maximizeBtn.textContent = '⛶'; // Icône Maximize
+                maximizeBtn.title = 'Agrandir la fenêtre';
+            }
+
+            // Assure que le défilement est en bas après le redimensionnement
+            const messagesDiv = document.getElementById('chatbot-messages');
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function addUserMessage(text) {
+            const messagesDiv = document.getElementById('chatbot-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user';
+            messageDiv.innerHTML = `<div class="message-content">${escapeHtml(text)}</div>`;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function addBotMessage(text, suggestions = []) {
+            const messagesDiv = document.getElementById('chatbot-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+            
+            // Format text with line breaks and markdown-style formatting
+            let formattedText = escapeHtml(text)
+            formattedText = formattedText.replace(/\n/g, '<br>');
+            const urlRegex = /(https?:\/\/[^\s<]+)/g;
+            
+
+            // Remplacer l'URL par une balise <a>
+            formattedText = formattedText.replace(urlRegex, function(url) {
+                // Envelopper l'URL détectée dans une balise <a>
+                // target="_blank" permet d'ouvrir le lien dans un nouvel onglet
+                let cleanUrl = url.replace(/<br>$/i, '');
+                return `<a href="${url}" target="_blank" style="color: #667eea; text-decoration: underline;">${url}</a>`;
+            });
+
+            formattedText = formattedText
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/• /g, '&nbsp;&nbsp;•&nbsp;');
+            
+            let html = `<div class="message-content">${formattedText}</div>`;
+            
+            if (suggestions.length > 0) {
+                html += '<div class="suggestions">';
+                suggestions.forEach(suggestion => {
+                    html += `<button class="suggestion-btn" onclick="sendSuggestion('${escapeHtml(suggestion)}')">${escapeHtml(suggestion)}</button>`;
+                });
+                html += '</div>';
+            }
+            
+            messageDiv.innerHTML = html;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function showTyping() {
+            const messagesDiv = document.getElementById('chatbot-messages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = '<div class="typing-indicator active"><span></span><span></span><span></span></div>';
+            messagesDiv.appendChild(typingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typingDiv = document.getElementById('typing-indicator');
+            if (typingDiv) {
+                typingDiv.remove();
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatbot-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            input.value = '';
+            addUserMessage(message);
+            showTyping();
+
+            try {
+                // Simulate API call - Replace with your actual backend endpoint
+                const response = await simulateBackend(message);
+                
+                hideTyping();
+                addBotMessage(response.message, response.suggestions);
+            } catch (error) {
+                hideTyping();
+                addBotMessage("Désolé, une erreur s'est produite. Veuillez réessayer.");
+            }
+        }
+
+        function sendSuggestion(text) {
+            document.getElementById('chatbot-input').value = text;
+            sendMessage();
+        }
+
+        // Real backend API call
+        async function simulateBackend(message) {
+            const API_URL = 'http://localhost:5000/api/chat';
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                
+                // Update session ID if new
+                if (data.session_id) {
+                    sessionId = data.session_id;
+                }
+
+                return {
+                    message: data.message || "Désolé, je n'ai pas pu traiter votre demande.",
+                    suggestions: data.suggestions || []
+                };
+            } catch (error) {
+                console.error('API Error:', error);
+                
+                // Fallback response if API is down
+                return {
+                    message: "Désolé, une erreur s'est produite. Veuillez réessayer dans quelques instants.",
+                    suggestions: [
+                        "Réessayer",
+                        "Contacter l'équipe"
+                    ]
+                };
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
