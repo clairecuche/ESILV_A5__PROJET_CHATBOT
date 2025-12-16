@@ -173,10 +173,6 @@
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
         }
 
-        #chatbot-button.open {
-            background: #e74c3c;
-        }
-
         #chatbot-popup {
             position: fixed;
             bottom: 20px;
@@ -498,6 +494,7 @@
             <div class="chatbot-header">
                 <div class="chatbot-header-actions">
                     <button id="maximize-btn" class="action-btn" onclick="toggleMaximize()">⛶</button>
+                    <button id="close-btn" class="action-btn" onclick="toggleChatbot()" title="Fermer">✕</button>
                     </div>
                 <h3>🎓 Assistant ESILV</h3>
                 <p>Posez-moi vos questions</p>
@@ -552,12 +549,16 @@
             isOpen = !isOpen;
             popup.classList.toggle('active');
             button.classList.toggle('open');
-            button.textContent = isOpen ? '✕' : '💬';
 
             if (isOpen) {
                 document.getElementById('chatbot-input').focus();
+            }else {
+                if (popup.classList.contains('maximized')) {
+                    toggleMaximize(); 
+                }
             }
         }
+        
 
         function openChatbot() {
             if (!isOpen) {
