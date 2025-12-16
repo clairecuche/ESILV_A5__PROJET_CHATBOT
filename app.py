@@ -25,29 +25,32 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 SUGGESTED_QUESTIONS = {
+    # Informations Générales / Contact
     "accueil": [
-        "📚 Quels sont les programmes disponibles ?",
-        "💰 Quels sont les frais de scolarité ?",
-        "📍 Où se trouve le campus ?",
         "📞 Je souhaite être contacté",
+        "🤵 Qui est le directeur de l'ESILV ?",
+        "📍 Où se trouve le campus principal ?",
     ],
+    
+    # Cursus et Programmes
     "programmes": [
-        "🤖 Parlez-moi du programme Intelligence Artificielle",
-        "📊 Qu'est-ce que le programme de Finance ?",
+        "🎓 Quelle est la durée du cursus ingénieur ?",
+        "🤝 Existe-t-il un double diplôme ingénieur-manager ?",
+        "🤖 Présente moi la majeure Data et Intelligence Artificielle",
+        "📊 Y a-t-il un programme en Data Science ?",
         "🔒 Informations sur la Cybersécurité",
-        "💻 Quelles sont les spécialisations disponibles ?",
     ],
+    
+    # Admission et Financement
     "admission": [
-        "✅ Quelles sont les conditions d'admission ?",
-        "📝 Comment s'inscrire ?",
-        "📅 Quelles sont les dates importantes ?",
-        "🎓 Quel est le niveau requis ?",
+        "💰 Y a-t-il des bourses disponibles ?",
+        "🌍 Acceptez-vous les étudiants internationaux ?",
     ],
+    
+    # Vie Étudiante
     "vie_etudiante": [
-        "🏠 Où se loger près du campus ?",
         "🎯 Quelles sont les associations étudiantes ?",
-        "💼 Y a-t-il des stages obligatoires ?",
-        "🌍 Peut-on partir à l'étranger ?",
+        "⚽ Quelles activités sportives sont proposées ?",
     ]
 }
 
