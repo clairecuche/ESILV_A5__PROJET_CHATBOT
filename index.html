@@ -530,10 +530,11 @@
                 "• 📞 Être mis en contact avec un conseiller\n\n" +
                 "Comment puis-je vous aider ?",
                 [
-                    "Quels sont les programmes disponibles ?",
-                    "Comment s'inscrire ?",
+
+                    "Où se trouve le campus principal ?",
                     "Je souhaite être contacté",
-                    "Informations sur la Cybersécurité"
+                    "Qui est le directeur de l'esilv ?",
+                    "Quelle est la durée du cursus ingénieur ?"
                 ]
             );
         };
@@ -588,7 +589,83 @@
             const messagesDiv = document.getElementById('chatbot-messages');
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
-        
+
+        function addFormTemplate() {
+            const messagesDiv = document.getElementById('chatbot-messages');
+            const formDiv = document.createElement('div');
+            formDiv.className = 'message bot';
+            
+            // On reproduit la structure du formulaire Streamlit
+            formDiv.innerHTML = `
+                <div class="message-content" style="width: 100%; border: 1px solid #e0e0e0; background: white; padding: 15px;">
+                    <strong style="color: #667eea; display: block; margin-bottom: 10px;">📋 Formulaire de contact</strong>
+                    <form id="contact-form" onsubmit="handleFormSubmit(event)" style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; gap: 5px;">
+                            <input type="text" id="f_prenom" placeholder="Prénom *" required style="width: 50%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                            <input type="text" id="f_nom" placeholder="Nom *" required style="width: 50%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                        </div>
+                        <input type="email" id="f_email" placeholder="Email *" required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                        <input type="tel" id="f_tel" placeholder="Téléphone *" required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                        
+                        <label style="font-size: 0.8rem; color: #666;">Programme d'intérêt *</label>
+                        <select id="f_programme" required style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="Data & IA">Data & IA</option>
+                            <option value="Cybersécurité">Cybersécurité</option>
+                            <option value="FinTech">FinTech</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Systeme embarqués">Systèmes Embarqués</option>
+                        </select>
+
+                        <textarea id="f_message" placeholder="Message (optionnel)" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px; height: 60px; resize: none;"></textarea>
+                        
+                        <div style="display: flex; gap: 5px; margin-top: 5px;">
+                            <button type="submit" style="flex: 2; background: #667eea; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold;">✅ Envoyer</button>
+                            <button type="button" onclick="this.closest('.message').remove()" style="flex: 1; background: #f8f9fa; border: 1px solid #ddd; padding: 10px; border-radius: 5px; cursor: pointer;">❌ Annuler</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            messagesDiv.appendChild(formDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            // Récupération et nettoyage strict
+            const prenom = document.getElementById('f_prenom').value.trim();
+            const nom = document.getElementById('f_nom').value.trim();
+            const email = document.getElementById('f_email').value.trim();
+            const telephone = document.getElementById('f_tel').value.trim();
+            const programme = document.getElementById('f_programme').value.trim();
+            const messagePart = document.getElementById('f_message').value.trim();
+
+            // Construction SANS AUCUN ESPACE au début des lignes
+            // On utilise \n explicitement pour éviter les problèmes d'indentation du code source
+            const summary = "FORMULAIRE_COMPLET\n" + 
+                            "NOM: " + prenom + " " + nom + "\n" +
+                            "EMAIL: " + email + "\n" +
+                            "TELEPHONE: " + telephone + "\n" +
+                            "PROGRAMME: " + programme + "\n" +
+                            "MESSAGE: " + messagePart;
+
+            // Log console pour vérifier ce qui part réellement (F12 pour voir)
+            console.log("Payload envoyé au serveur :\n", summary);
+
+            event.target.closest('.message.bot').remove();
+            addUserMessage("Demande de contact envoyée pour " + prenom + " " + nom);
+            
+            showTyping();
+            try {
+                const response = await simulateBackend(summary);
+                hideTyping();
+                addBotMessage(response.message, response.suggestions);
+            } catch (error) {
+                hideTyping();
+                addBotMessage("Une erreur est survenue.");
+            }
+        }
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
                 sendMessage();
@@ -670,11 +747,13 @@
             showTyping();
 
             try {
-                // Simulate API call - Replace with your actual backend endpoint
                 const response = await simulateBackend(message);
-                
                 hideTyping();
-                addBotMessage(response.message, response.suggestions);
+                if (response.is_form) {
+                    addFormTemplate();
+                } else {
+                    addBotMessage(response.message, response.suggestions);
+                }
             } catch (error) {
                 hideTyping();
                 addBotMessage("Désolé, une erreur s'est produite. Veuillez réessayer.");
@@ -715,7 +794,8 @@
 
                 return {
                     message: data.message || "Désolé, je n'ai pas pu traiter votre demande.",
-                    suggestions: data.suggestions || []
+                    suggestions: data.suggestions || [],
+                    is_form: data.is_form
                 };
             } catch (error) {
                 console.error('API Error:', error);
@@ -726,7 +806,8 @@
                     suggestions: [
                         "Réessayer",
                         "Contacter l'équipe"
-                    ]
+                    ],
+                    is_form: false
                 };
             }
         }

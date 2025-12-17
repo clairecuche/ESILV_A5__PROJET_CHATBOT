@@ -26,27 +26,43 @@ supervisor = AgentSuperviseur()
 sessions = {}
 
 # Suggested questions by context
+
 SUGGESTIONS_MAP = {
     'welcome': [
-        "Quels sont les programmes disponibles ?",
-        "Comment s'inscrire ?",
+        "Où se trouve le campus principal ?",
         "Je souhaite être contacté",
-        "Informations sur la Cybersécurité"
+        "Qui est le directeur de l'esilv ?",
+        "Quelle est la durée du cursus ingénieur ?"
     ],
     'programmes': [
-        "Data & IA",
-        "Cybersécurité",
-        "FinTech",
-        "Systèmes Embarqués"
+        "Data & IA", 
+        "FinTech",    
+        "Mécanique", 
+        "Energie et villes durables",
+    ],
+    'cursus_general': [
+        "Quelle est la durée du cursus ingénieur ?",
+        "Existe t'il un double diplôme ingénieur-manager ?",
+        "Y a-t-il un programme en Data Science ?",
+        "Quels sont les programmes disponibles ?"
+    ],
+    'admission': [
+        "Y a-t-il des bourses disponibles ?",
+        "Acceptez-vous les étudiants internationaux ?"
+    ],
+    'vie_etudiante': [
+        "Quelles sont les associations étudiantes ?",
+        "Quelles activités sportives sont proposées ?"
     ],
     'contact': [
-        "Oui, contactez-moi",
-        "Voir d'autres programmes"
+        "Où se trouve le campus principal ?",
+        "Quelle est la durée du cursus ingénieur ?"
     ],
     'default': [
-        "Les programmes",
-        "Les admissions",
-        "Être contacté"
+        "Où se trouve le campus principal ?",
+        "Je souhaite être contacté",
+        "Quelles sont les associations étudiantes ?",
+        "Quelle est la durée du cursus ingénieur ?"
     ]
 }
 
@@ -55,24 +71,33 @@ def get_suggestions(message: str, response: str) -> list:
     message_lower = message.lower()
     response_lower = response.lower()
     
-    # Contact context
+    # 1. Contexte CONTACT
     if any(word in message_lower for word in ['contact', 'appel', 'rappel', 'contacté']):
         return SUGGESTIONS_MAP['contact']
     
-    # Programme context
-    if any(word in message_lower for word in ['programme', 'formation', 'cursus']):
-        return SUGGESTIONS_MAP['programmes']
+    # 2. Contexte ADMISSION / INTERNATIONAL / BOURSES
+    if any(word in message_lower for word in ['admission', 'bourse', 'international', 'étranger', 'prix', 'coût']):
+        return SUGGESTIONS_MAP['admission']
+        
+    # 3. Contexte VIE ÉTUDIANTE / SPORT / ASSOS
+    if any(word in message_lower for word in ['association', 'asso', 'sport', 'vie', 'activité']):
+        return SUGGESTIONS_MAP['vie_etudiante']
     
-    # If response mentions contacting
-    if 'contacté' in response_lower or 'contact' in response_lower:
+    # 4. Contexte MAJEURES (Spécificités)
+    majeure_keywords = ['data', 'ia', 'intelligence', 'cyber', 'sécurité', 'fintech', 'mécanique', 'énergie', 'villes']
+    if any(word in message_lower for word in majeure_keywords) or any(word in response_lower for word in majeure_keywords):
+        return SUGGESTIONS_MAP['programmes']
+
+    # 5. Contexte CURSUS GÉNÉRAL
+    gen_keywords = ['programme', 'formation', 'cursus', 'diplôme', 'ingénieur', 'manager', 'spécialité']
+    if any(word in message_lower for word in gen_keywords) or any(word in response_lower for word in gen_keywords):
+        return SUGGESTIONS_MAP['cursus_general']
+    
+    # 6. Fallback si la réponse mentionne un contact
+    if 'contact' in response_lower:
         return SUGGESTIONS_MAP['contact']
     
-    # If response mentions programmes
-    if 'programme' in response_lower or 'formation' in response_lower:
-        return SUGGESTIONS_MAP['programmes']
-    
     return SUGGESTIONS_MAP['default']
-
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -102,7 +127,7 @@ def chat():
             message=message,
             session_id=session_id
         )
-        
+
         # Store in session history
         sessions[session_id]['messages'].append({
             'role': 'user',
@@ -117,6 +142,8 @@ def chat():
         
         # Get contextual suggestions
         suggestions = get_suggestions(message, response)
+
+        is_form_detected = "nom complet" in response.lower() or "FORMULAIRE" in response.upper()
         
         logger.info(f"✅ Response sent to session {session_id[:8]}")
         
@@ -124,6 +151,7 @@ def chat():
             'session_id': session_id,
             'message': response,
             'suggestions': suggestions,
+            'is_form': is_form_detected,
             'timestamp': datetime.now().isoformat()
         })
         

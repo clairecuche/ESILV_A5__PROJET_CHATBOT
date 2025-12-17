@@ -152,7 +152,19 @@ Si une information n'est pas présente, utilise null."""),
                 extracted['programme'] = programme_name
                 logger.info(f"✓ Programme détecté: {programme_name}")
                 break
-        
+
+        # 4. Message (Optionnel)
+        message_match = re.search(r'MESSAGE:\s*(.*)', message_clean, re.IGNORECASE | re.DOTALL)
+        if message_match:
+            extracted['message'] = message_match.group(1).strip()
+
+        # 5. NOM (Correction de l'UnboundLocalError)
+        # On cherche d'abord via le tag NOM:
+        tag_name_match = re.search(r'NOM:\s*(.*)', message_clean, re.IGNORECASE)
+        if tag_name_match:
+            extracted['nom'] = tag_name_match.group(1).split('\n')[0].strip()
+            logger.info(f"✓ Nom extrait via tag: {extracted['nom']}")
+            
         if not extracted:
             form_data = state_manager.get_form_data(session_id)
             if not form_data.get('nom'):
@@ -185,6 +197,8 @@ Si une information n'est pas présente, utilise null."""),
             if not form_data.get('programme') and form_data.get('nom'):
                 extracted['programme'] = message_clean
                 logger.info(f"✓ Message interprété comme programme: {extracted['programme']}")
+
+                name_match = re.search(r'NOM:\s*(.*)', message_clean, re.IGNORECASE)
         
         return extracted
     
@@ -216,6 +230,9 @@ Si une information n'est pas présente, utilise null."""),
         
         if 'programme' in extracted:
             validated_data['programme'] = extracted['programme'].strip()
+        
+        if 'message' in extracted:
+            validated_data['message'] = extracted['message']
         
         return {
             'valid': len(errors) == 0,
