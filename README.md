@@ -1,67 +1,98 @@
-# ESILV_A5__PROJET_CHATBOT
+# 🤖 Intelligent Chatbot ESILV - RAG & Form
 
+This project is an intelligent chatbot developed as part of the AI & Data major at ESILV. It combines the power of a local language model (Ollama) with a document knowledge base (RAG) and a data collection system (Form Agent).
 
-Pour scrapper : 
-    - Scrapping rapide : python scrapper.py              python .\data\scrapper.py --full
-    - Scrapping complet : python scrapper.py --full
+## 🌟 Features
 
-Pour lancer le front : 
-    - streamlit run app.py
+* **Intelligent Orchestrator**: Analyzes the user's intent to route to the appropriate agent.
+* **RAG Agent (Retrieval Augmented Generation)**: Answers specific questions about ESILV using a FAISS vector database (indexed PDFs).
+* **Form Agent**: Collects contact information conversationally and stores it locally.
+* **Web Interface**: Modern and responsive chat in HTML/CSS/JS.
+* **Fully Local**: Privacy-respecting, no data is sent to the cloud (uses Ollama).
 
-## Partie RAG : 
-1. Installer les dépendances
-pip install -r requirements.txt
+## 🏗️ Technical Architecture
 
-2. Installer et démarrer Ollama
-Téléchargez depuis: https://ollama.ai
-ollama serve
+The project is fully containerized with Docker to ensure a smooth installation.
 
-Dans un autre terminal:
-ollama pull gemma
+* **Backend**: Flask (Python 3.10)
+* **LLM**: Ollama (Default model: gemma2:2b)
+* **Vector Store**: FAISS with sentence-transformers embeddings
+* **AI Framework**: LangChain
+* **Frontend**: HTML5 / CSS3 / JavaScript (Fetch API)
 
-3. Indexer vos PDFs ESILV
-python -m src.rag.main_rag_lang index 
+## 🚀 Installation and Startup
 
-> Indexer avec les dossiers par défaut (data/pdf + data/autres)
-python -m src.rag.main_rag index
+### 1. Prerequisites
 
-> Indexer seulement un dossier PDF personnalisé (web = data/autres)
-python -m src.rag.main_rag index ./mes_pdfs
+* Docker Desktop installed and running.
+* Ollama installed on your machine (Windows/Mac/Linux).
+* Download the required model:
 
-> Indexer avec les deux dossiers personnalisés
-python -m src.rag.main_rag index ./mes_pdfs ./mon_scraping
+```bash
+ollama pull gemma2:2b
+```
 
-4. Lancer le chatBot
-python -m src.rag.main_rag_lang chat
+### 2. Ollama Configuration
 
-5. Stats doc
-python -m src.rag.main_rag_lang stats
+For Docker to communicate with Ollama on your host machine, make sure Ollama allows external connections (default on Windows). The project uses the address [http://host.docker.internal:11434](http://host.docker.internal:11434).
 
+### 3. Launching the Project
 
-## Structure clé du projet (important files)
-- `src/rag/main_rag_lang.py` — point d’entrée CLI (commandes : `index`, `chat`, `stats`).
-- `src/rag/generation/indexing_pipeline_lang.py` — Orchestrateur : charge les documents, nettoie, chunke, génère les embeddings et indexe dans la base vectorielle.
-- `src/rag/document_processing/pdf_loader_lang.py` — Loader PDF (extraction du texte, retourne des `Document` compatibles LangChain).
-- `src/rag/document_processing/text_cleaner.py` — Nettoyage et normalisation du texte extrait.
-- `src/rag/document_processing/chunker_lang.py` — Chunker optimisé (basé sur les splitters LangChain) pour produire des passages à indexer.
-- `src/rag/embeddings/embeddings_generator_lang.py` — Génération des embeddings (p.ex. SentenceTransformers / HuggingFace).
-- `src/rag/vectorstore/vector_store_lang.py` — Interface pour le stockage vectoriel (FAISS/Chroma, adaptation selon configuration).
-- `src/rag/generation/retriever_lang.py` — Logique de récupération des passages pertinents depuis la base vectorielle.
-- `src/rag/generation/llm_handler.py` — Gestionnaire LLM (ex. Ollama) pour interroger et formater les réponses.
-- `src/rag/generation/rag_pipeline.py` — Pipeline RAG combinant `Retriever` + `LLM` pour exécuter une requête complète.
-- `requirements.txt` — Liste des dépendances principales (vérifiez `pypdf`, `sentence-transformers`, `faiss-cpu`, `langchain`, etc.)
-<     ```
+Clone the repository, navigate to the root, and run:
 
-- **Commandes utiles (récapitulatif)**
-  - Indexer les PDFs +web scraping complet :
-    ```powershell
-    python -m src.rag.main_rag_lang index 
-    ```
-  - Lancer le chat :
-    ```powershell
-    python -m src.rag.main_rag_lang chat
-    ```
+```bash
+docker-compose up --build -d
+```
 
-Se connecter à l'environnemnet virtuel python (toutes les dépendances)
-.venv\Scripts\Activate.ps1  
+The first build may take a long time (around 20-40 min) as it downloads heavy computation libraries (PyTorch, NVIDIA).
+
+### 4. Access
+
+* **Chatbot**: Open the `index.html` file in your browser.
+* **API Healthcheck**: [http://localhost:5000/api/health](http://localhost:5000/api/health)
+
+## 🛠️ Useful Commands (Maintenance)
+
+| Action                          | Command                             |
+| ------------------------------- | ------------------------------------ |
+| Launch the application          | `docker-compose up -d`               |
+| Stop the application            | `docker-compose down`                |
+| View logs (AI Engine)           | `docker logs -f esilv-chatbot-api`  |
+| Restart after code changes      | `docker-compose restart chatbot-api`|
+| Update dependencies             | `docker-compose up --build -d`       |
+
+## 📁 Project Structure
+
+```plaintext
+.
+├── src/
+│   ├── agents/          # Agent logic (Orchestrator, RAG, Form)
+│   └── rag/             # Document processing pipeline and FAISS
+├── data/
+│   ├── contacts/        # Storage of JSON files (Saved contacts)
+│   ├── pdf/             # Source documents (Official PDFs)
+│   └── pdfs/            # Source documents (From scraping)
+├── vector_store_faiss/  # Generated vector index
+├── app_streamlit_V1/    # Version 1 of the interface (Archive)
+├── chatbot.py           # Flask API entry point
+├── index.html           # User interface (Front-end)
+├── Dockerfile           # Docker image configuration
+├── docker-compose.yml   # Container and volume orchestration
+├── Readme.md            # Project documentation
+└── requirements.txt     # Python dependencies (Pinned)
+
+```
+
+## 📝 Usage
+
+* Question about the school: "What are the tuition fees?" → The RAG agent will answer.
+* Contact: "I want to register" → The Form agent will take over.
+* Data verification: Contacts are saved in `data/contacts/contacts.json`.
+
+## ⚠️ Important Notes
+
+* **RAM**: Docker and Ollama consume a significant amount of memory. At least 16 GB of RAM is recommended.
+* **Docker Volume**: Contact data and the FAISS index are persistent thanks to Docker volumes; they are not deleted when the container stops.
+
+Author: [Claire CUCHE and Inès DARDE] - ESILV A5 DIA2
 
