@@ -22,9 +22,11 @@ class VectorStoreManager:
         self.index_directory = index_directory
         self.vectorstore: Optional[FAISS] = None
         self.embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
-        
-        os.makedirs(self.index_directory, exist_ok=True)
-        print(f"Index FAISS path: {os.path.abspath(self.index_directory)}")
+
+        # On ne crée le dossier QUE s'il n'existe pas du tout
+        if not os.path.exists(self.index_directory):
+            os.makedirs(self.index_directory, exist_ok=True)
+            logger.info(f"Dossier créé : {os.path.abspath(self.index_directory)}")
     
     
     def create_and_save_index(self, chunks: List[LCDocument]):
@@ -44,26 +46,22 @@ class VectorStoreManager:
         
     
     def load_index(self) -> bool:
-        """
-        Charge l'index FAISS depuis le répertoire local.
-        """
-        if not os.path.exists(self.index_directory):
-            logger.error(f"Index directory not found: {self.index_directory}")
+        # Vérification robuste des fichiers attendus par FAISS
+        faiss_path = os.path.join(self.index_directory, "index.faiss")
+        if not os.path.exists(faiss_path):
+            logger.error(f"Fichier index.faiss introuvable dans : {self.index_directory}")
             return False
             
-        logger.info(f"Loading FAISS index from: {self.index_directory}")
-
         try:
             self.vectorstore = FAISS.load_local(
                 self.index_directory, 
                 self.embeddings, 
                 allow_dangerous_deserialization=True
             )
-            logger.info("FAISS index loaded successfully.")
+            logger.info("Index FAISS chargé avec succès.")
             return True
         except Exception as e:
-            logger.error(f"Error loading FAISS index: {e}")
-            self.vectorstore = None
+            logger.error(f"Erreur chargement FAISS : {e}")
             return False
             
     

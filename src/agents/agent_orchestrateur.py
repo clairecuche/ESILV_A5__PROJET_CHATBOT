@@ -45,6 +45,7 @@ class AgentSuperviseur:
         
         self.llm = ChatOllama(
             model="gemma2:2b", 
+            base_url="http://host.docker.internal:11434",
             temperature=0.0,
             num_predict=10
         )

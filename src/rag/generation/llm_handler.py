@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 
 class OllamaLLM:
     """
@@ -9,7 +10,7 @@ class OllamaLLM:
     def __init__(
         self,
         model: str = "gemma2:2b",
-        base_url: str = "http://localhost:11434",
+        base_url = os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434"),
         temperature: float = 0.3,
         max_tokens: int = 1000
     ):

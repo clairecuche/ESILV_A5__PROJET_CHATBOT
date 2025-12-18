@@ -1,6 +1,7 @@
 from pathlib import Path
 import logging
 import re
+import os
 
 from src.rag.generation.rag_pipeline import RAGPipeline
 from src.rag.generation.retriever_lang import Retriever
@@ -30,7 +31,10 @@ class AgentRAG:
         temperature: float = 0.1,
     ):
         self.model = model
-        self.index_directory = index_directory
+        if os.path.exists("/app/vector_store_faiss"):
+            self.index_directory = "/app/vector_store_faiss"
+        else:
+            self.index_directory = index_directory
         self.top_k = top_k
         self.final_k = final_k
         self.temperature = temperature

@@ -500,7 +500,7 @@
                 <p>Posez-moi vos questions</p>
             </div>
             <div id="chatbot-messages">
-                <!-- Messages will be added here -->
+
             </div>
             <div class="chatbot-input-container">
                 <div class="chatbot-input-wrapper">
@@ -533,7 +533,7 @@
 
                     "Où se trouve le campus principal ?",
                     "Je souhaite être contacté",
-                    "Qui est le directeur de l'esilv ?",
+                    "Quelles sont les associations étudiantes ?",
                     "Quelle est la durée du cursus ingénieur ?"
                 ]
             );
@@ -641,8 +641,7 @@
             const programme = document.getElementById('f_programme').value.trim();
             const messagePart = document.getElementById('f_message').value.trim();
 
-            // Construction SANS AUCUN ESPACE au début des lignes
-            // On utilise \n explicitement pour éviter les problèmes d'indentation du code source
+
             const summary = "FORMULAIRE_COMPLET\n" + 
                             "NOM: " + prenom + " " + nom + "\n" +
                             "EMAIL: " + email + "\n" +
@@ -650,7 +649,6 @@
                             "PROGRAMME: " + programme + "\n" +
                             "MESSAGE: " + messagePart;
 
-            // Log console pour vérifier ce qui part réellement (F12 pour voir)
             console.log("Payload envoyé au serveur :\n", summary);
 
             event.target.closest('.message.bot').remove();
@@ -692,10 +690,7 @@
             const urlRegex = /(https?:\/\/[^\s<]+)/g;
             
 
-            // Remplacer l'URL par une balise <a>
             formattedText = formattedText.replace(urlRegex, function(url) {
-                // Envelopper l'URL détectée dans une balise <a>
-                // target="_blank" permet d'ouvrir le lien dans un nouvel onglet
                 let cleanUrl = url.replace(/<br>$/i, '');
                 return `<a href="${url}" target="_blank" style="color: #667eea; text-decoration: underline;">${url}</a>`;
             });

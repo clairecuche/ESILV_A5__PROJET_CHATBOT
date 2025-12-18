@@ -18,6 +18,7 @@ class AgentFormulaire:
     def __init__(self):
         self.llm = ChatOllama(
             model="gemma2:2b", 
+            base_url="http://host.docker.internal:11434",
             temperature=0.3,
             num_predict=256,      # Limite tokens générés
             num_ctx=2048          # Réduit contexte
