@@ -1,0 +1,95 @@
+{
+  "metadata": {
+    "date": "2025-12-19 12:04:50",
+    "total_queries": 10,
+    "model": "gemma2:2b"
+  },
+  "summary": {
+    "success_rate": 1.0,
+    "avg_accuracy": 0.6716666666666666,
+    "avg_latency": 147.71269536018372,
+    "median_latency": 140.09749150276184
+  },
+  "results": [
+    {
+      "question": "Où se trouve le campus principal ?",
+      "category": "Localisation",
+      "response": "Le campus principal de l'ESILV se situe à Paris-La Défense.",
+      "latency": 140.1936478614807,
+      "accuracy": 1.0,
+      "success": true
+    },
+    {
+      "question": "Qui est le directeur de l'esilv ?",
+      "category": "Administration",
+      "response": "Le directeur de l'ESILV est Pascal Pinot.",
+      "latency": 159.3536515235901,
+      "accuracy": 1.0,
+      "success": true
+    },
+    {
+      "question": "Quelle est la durée du cursus ingénieur ?",
+      "category": "Cursus",
+      "response": "Le cursus ingénieur à l'ESILV dure 5 ans . Les élèves réalisent des projets concrets tout au long de leur cursus, ce qui les prépare aux réalités du monde professionnel.",
+      "latency": 157.1315929889679,
+      "accuracy": 0.75,
+      "success": true
+    },
+    {
+      "question": "Existe-t-il un double diplôme ingénieur-manager ?",
+      "category": "Programmes",
+      "response": "Oui, il existe un double diplôme ingénieur-manager . Ce programme est ouvert aux élèves de 1ère année du cursus ingénieur de l’ESILV sur le campus de Paris La Défense.\n\n📚 Source :\n1. https://www.esilv",
+      "latency": 140.00133514404297,
+      "accuracy": 1.0,
+      "success": true
+    },
+    {
+      "question": "Y a-t-il un programme en Data Science ?",
+      "category": "Programmes",
+      "response": "Oui, l'ESILV propose un programme en Data Science . Le programme couvre des modules comme la programmation, les bases de données avancées, le Machine Learning et Clustering, ainsi que la création de s",
+      "latency": 126.9080457687378,
+      "accuracy": 0.8,
+      "success": true
+    },
+    {
+      "question": "Quels sont les programmes disponibles ?",
+      "category": "Programmes",
+      "response": "Les programmes disponibles à l'ESILV incluent un Bachelor post-bac en trois ans, un Mastère Spécialisé en alternance pour accompagner les clients dans la conception et la réalisation de projets indust",
+      "latency": 108.26984286308289,
+      "accuracy": 0.3333333333333333,
+      "success": true
+    },
+    {
+      "question": "Y a-t-il des bourses disponibles ?",
+      "category": "Admission",
+      "response": "Oui, il existe plusieurs types de bourses pour les étudiants. \nVoici quelques exemples :\n* **Bourse Elior Group Solidarités:** Cette bourse est destinée aux jeunes de 18 à 30 ans ayant un projet perso",
+      "latency": 202.4557421207428,
+      "accuracy": 0.75,
+      "success": true
+    },
+    {
+      "question": "Acceptez-vous les étudiants internationaux ?",
+      "category": "Admission",
+      "response": "Oui, l'ESILV accepte les étudiants internationaux. L'école propose des programmes d'échange et de double diplôme pour les étudiants internationaux dès la 3e année .",
+      "latency": 124.14265155792236,
+      "accuracy": 0.25,
+      "success": true
+    },
+    {
+      "question": "Quelles sont les associations étudiantes ?",
+      "category": "Vie Étudiante",
+      "response": "Les associations étudiantes de l’ESILV couvrent un large éventail de domaines, tels que le sport, la culture, l'humanitaire et l'engagement technologique. \n \nVoici quelques exemples:\n\n* **Léo Talks:**",
+      "latency": 139.21260404586792,
+      "accuracy": 0.5,
+      "success": true
+    },
+    {
+      "question": "Quelles activités sportives sont proposées ?",
+      "category": "Vie Étudiante",
+      "response": "L'ESILV propose 38 sports, dont les disciplines suivantes : Athlétisme, Aviron, Badminton, Basket-Ball, Boxe Anglaise, Boxe Française, Escalade, Escrime, Fitness, Football, Gym au sol, Handball, Hocke",
+      "latency": 179.45783972740173,
+      "accuracy": 0.3333333333333333,
+      "success": true
+    }
+  ]
+}
