@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  chatbot-api:
+    build: .
+    container_name: esilv-chatbot-api
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      # AJOUT : Si votre index FAISS est sur votre PC, il faut le monter en volume
+      - ./vector_store_faiss:/app/vector_store_faiss 
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+      - VECTOR_STORE_PATH=/app/vector_store_faiss
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: always
