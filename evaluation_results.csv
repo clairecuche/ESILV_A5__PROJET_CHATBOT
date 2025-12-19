@@ -1,20 +1,19 @@
 question,category,response,latency,accuracy,success
-Où se trouve le campus principal ?,Localisation,Le campus principal de l'ESILV se situe à Paris-La Défense.,140.1936478614807,1.0,True
-Qui est le directeur de l'esilv ?,Administration,Le directeur de l'ESILV est Pascal Pinot.,159.3536515235901,1.0,True
-Quelle est la durée du cursus ingénieur ?,Cursus,"Le cursus ingénieur à l'ESILV dure 5 ans . Les élèves réalisent des projets concrets tout au long de leur cursus, ce qui les prépare aux réalités du monde professionnel.",157.1315929889679,0.75,True
-Existe-t-il un double diplôme ingénieur-manager ?,Programmes,"Oui, il existe un double diplôme ingénieur-manager . Ce programme est ouvert aux élèves de 1ère année du cursus ingénieur de l’ESILV sur le campus de Paris La Défense.
+Où se trouve le campus principal ?,Localisation,Le campus principal de l'ESILV est situé à Paris-La Défense.,152.51032137870789,1.0,True
+Qui est le directeur de l'esilv ?,Administration,Le directeur de l'ESILV est Pascal Pinot .,168.74053764343262,1.0,True
+Quelle est la durée du cursus ingénieur ?,Cursus,La durée du cursus ingénieur à l'ESILV est de 5 ans . Les élèves réalisent des projets concrets sur les 5 années du cursus.,177.14924478530884,1.0,True
+Existe-t-il un double diplôme ingénieur-manager ?,Programmes,"Oui, il existe un double diplôme ingénieur-manager. 
+Il s'agit d'un programme unique qui permet aux étudiants de combiner une formation en ingénierie avec une formation en management à l'ESILV.
 
-📚 Source :
-1. https://www.esilv",140.00133514404297,1.0,True
-Y a-t-il un programme en Data Science ?,Programmes,"Oui, l'ESILV propose un programme en Data Science . Le programme couvre des modules comme la programmation, les bases de données avancées, le Machine Learning et Clustering, ainsi que la création de s",126.9080457687378,0.8,True
-Quels sont les programmes disponibles ?,Programmes,"Les programmes disponibles à l'ESILV incluent un Bachelor post-bac en trois ans, un Mastère Spécialisé en alternance pour accompagner les clients dans la conception et la réalisation de projets indust",108.26984286308289,0.3333333333333333,True
+📚 Sou",144.29574036598206,0.8,True
+Y a-t-il un programme en Data Science ?,Programmes,"Oui, l'ESILV propose un programme en Data Science . Le programme est axé sur la collecte, la modélisation et le stockage de données, ainsi que leur analyse et interprétation.",133.43408346176147,1.0,True
+Quels sont les programmes disponibles ?,Programmes,"Les programmes disponibles à l'ESILV incluent un Bachelor post-bac en trois ans, un programme de formation en alternance en deux ans et un double cursus en 5 ans. 
+
+**Note:** Je n'ai pas pu répondre à",107.79976105690002,0.2857142857142857,True
 Y a-t-il des bourses disponibles ?,Admission,"Oui, il existe plusieurs types de bourses pour les étudiants. 
-Voici quelques exemples :
-* **Bourse Elior Group Solidarités:** Cette bourse est destinée aux jeunes de 18 à 30 ans ayant un projet perso",202.4557421207428,0.75,True
-Acceptez-vous les étudiants internationaux ?,Admission,"Oui, l'ESILV accepte les étudiants internationaux. L'école propose des programmes d'échange et de double diplôme pour les étudiants internationaux dès la 3e année .",124.14265155792236,0.25,True
-Quelles sont les associations étudiantes ?,Vie Étudiante,"Les associations étudiantes de l’ESILV couvrent un large éventail de domaines, tels que le sport, la culture, l'humanitaire et l'engagement technologique. 
- 
-Voici quelques exemples:
+* La Fondation Georges Besse offre une bourse aux étudiants rencontrant de sérieuses difficultés financières et avec un très bon niveau. ",188.61949920654297,0.8,True
+Acceptez-vous les étudiants internationaux ?,Admission,"Oui, l'ESILV accepte les étudiants internationaux. L'école propose des programmes d'échange et de double diplômes pour les étudiants internationaux dès la 3e année .",127.660799741745,0.42857142857142855,True
+Quelles sont les associations étudiantes ?,Vie Étudiante,"Les associations étudiantes de l’ESILV se regroupent au Pôle Léonard de Vinci. Elles couvrent des domaines variés tels que le sport, la culture, les sciences et la technique. 
 
-* **Léo Talks:**",139.21260404586792,0.5,True
-Quelles activités sportives sont proposées ?,Vie Étudiante,"L'ESILV propose 38 sports, dont les disciplines suivantes : Athlétisme, Aviron, Badminton, Basket-Ball, Boxe Anglaise, Boxe Française, Escalade, Escrime, Fitness, Football, Gym au sol, Handball, Hocke",179.45783972740173,0.3333333333333333,True
+Voici quelques exemples",133.47773337364197,0.5,True
+Quelles activités sportives sont proposées ?,Vie Étudiante,"L'ESILV propose 38 sports différents, dont les disciplines suivantes : Athlétisme, Aviron, Badminton, Basket-Ball, Boxe Anglaise, Boxe Française, Escalade, Escrime, Fitness, Football, Gym au sol, Hand",167.03303718566895,0.8,True
