@@ -1,95 +1,235 @@
 {
   "metadata": {
-    "date": "2025-12-19 12:42:40",
-    "total_queries": 10,
-    "model": "gemma2:2b"
+    "date": "2025-12-23 11:24:20",
+    "total_queries": 14,
+    "model": "gemma2:2b",
+    "evaluator": "sentence-transformers/all-MiniLM-L6-v2"
   },
   "summary": {
     "success_rate": 1.0,
-    "avg_accuracy": 0.7614285714285713,
-    "avg_latency": 150.07207581996917,
-    "median_latency": 148.40303087234497
+    "avg_semantic_score": 0.6482626455170768,
+    "avg_overall_score": 0.6494981375762395,
+    "avg_latency": 149.3630485023771,
+    "median_latency": 160.73137390613556,
+    "hallucination_prevention": 0.0
   },
-  "results": [
+  "by_category": {
+    "overall": {
+      "Administration": 0.888,
+      "Admission": 0.772,
+      "Cursus": 0.777,
+      "Hallucination Test": 0.0,
+      "Localisation": 0.892,
+      "Programmes": 0.746,
+      "Robustesse - Reformulation": 0.607,
+      "Robustesse - Typos": 0.712,
+      "Vie Étudiante": 0.717
+    },
+    "semantic": {
+      "Administration": 0.983,
+      "Admission": 0.775,
+      "Cursus": 0.825,
+      "Hallucination Test": 0.0,
+      "Localisation": 0.988,
+      "Programmes": 0.704,
+      "Robustesse - Reformulation": 0.581,
+      "Robustesse - Typos": 0.732,
+      "Vie Étudiante": 0.653
+    },
+    "latency": {
+      "Administration": 163.308,
+      "Admission": 184.206,
+      "Cursus": 188.454,
+      "Hallucination Test": 165.371,
+      "Localisation": 163.548,
+      "Programmes": 147.651,
+      "Robustesse - Reformulation": 48.554,
+      "Robustesse - Typos": 49.085,
+      "Vie Étudiante": 168.014
+    }
+  },
+  "detailed_results": [
     {
       "question": "Où se trouve le campus principal ?",
       "category": "Localisation",
       "response": "Le campus principal de l'ESILV est situé à Paris-La Défense.",
-      "latency": 152.51032137870789,
-      "accuracy": 1.0,
-      "success": true
+      "expected_answer": "Le campus principal de l'ESILV est situé à Paris La Défense",
+      "latency": 163.54819464683533,
+      "semantic": 0.9880409240722656,
+      "length": 1.0,
+      "citation": 0.0,
+      "overall": 0.8916286468505858,
+      "success": true,
+      "hallucination_ok": true
     },
     {
       "question": "Qui est le directeur de l'esilv ?",
       "category": "Administration",
-      "response": "Le directeur de l'ESILV est Pascal Pinot .",
-      "latency": 168.74053764343262,
-      "accuracy": 1.0,
-      "success": true
+      "response": "Le directeur de l'ESILV est Pascal Pinot.",
+      "expected_answer": "Pascal Pinot est le directeur de l'ESILV",
+      "latency": 163.30751085281372,
+      "semantic": 0.9827422499656677,
+      "length": 1.0,
+      "citation": 0.0,
+      "overall": 0.8879195749759674,
+      "success": true,
+      "hallucination_ok": true
     },
     {
       "question": "Quelle est la durée du cursus ingénieur ?",
       "category": "Cursus",
-      "response": "La durée du cursus ingénieur à l'ESILV est de 5 ans . Les élèves réalisent des projets concrets sur les 5 années du cursus.",
-      "latency": 177.14924478530884,
-      "accuracy": 1.0,
-      "success": true
+      "response": "Le cursus ingénieur à l'ESILV dure 5 ans . Les élèves réalisent des projets concrets tout au long de leur cursus afin de stimuler leurs compétences et capacités de futur ingénieur.",
+      "expected_answer": "Le cursus ingénieur à l'ESILV dure 5 ans",
+      "latency": 188.45399975776672,
+      "semantic": 0.8249787092208862,
+      "length": 1.0,
+      "citation": 0.0,
+      "overall": 0.7774850964546203,
+      "success": true,
+      "hallucination_ok": true
     },
     {
       "question": "Existe-t-il un double diplôme ingénieur-manager ?",
       "category": "Programmes",
-      "response": "Oui, il existe un double diplôme ingénieur-manager. \nIl s'agit d'un programme unique qui permet aux étudiants de combiner une formation en ingénierie avec une formation en management à l'ESILV.\n\n📚 Sou",
-      "latency": 144.29574036598206,
-      "accuracy": 0.8,
-      "success": true
+      "response": "Oui, il existe un double diplôme ingénieur-manager . Ce programme est ouvert aux élèves de 1ère année du cursus ingénieur de l’ESILV sur le campus de Paris La Défense. \n\n**Note:** Je n'ai pas pu trouver d'informations supplémentaires sur ce programme dans les documents fournis.\n\n📚 Source :\n1. https://www.esilv.fr/formations/double-diplome-ingenieur-manager/\n",
+      "expected_answer": "Oui, l'ESILV propose un double diplôme ingénieur-manager",
+      "latency": 166.40113735198975,
+      "semantic": 0.8451729416847229,
+      "length": 1.0,
+      "citation": 1.0,
+      "overall": 0.891621059179306,
+      "success": true,
+      "hallucination_ok": true
     },
     {
       "question": "Y a-t-il un programme en Data Science ?",
       "category": "Programmes",
-      "response": "Oui, l'ESILV propose un programme en Data Science . Le programme est axé sur la collecte, la modélisation et le stockage de données, ainsi que leur analyse et interprétation.",
-      "latency": 133.43408346176147,
-      "accuracy": 1.0,
-      "success": true
+      "response": "Oui, l'ESILV propose un programme de Data Science . Le programme se compose d'une spécialisation \"Data & Intelligence Artificielle\" et inclut des modules sur la machine learning, le deep learning, les algorithmes et outils de data science, ainsi que des projets d'intelligence artificielle.",
+      "expected_answer": "Oui, l'ESILV propose une spécialisation en Data Science et Intelligence Artificielle",
+      "latency": 150.6230273246765,
+      "semantic": 0.8162987232208252,
+      "length": 1.0,
+      "citation": 0.0,
+      "overall": 0.7714091062545776,
+      "success": true,
+      "hallucination_ok": true
     },
     {
       "question": "Quels sont les programmes disponibles ?",
       "category": "Programmes",
-      "response": "Les programmes disponibles à l'ESILV incluent un Bachelor post-bac en trois ans, un programme de formation en alternance en deux ans et un double cursus en 5 ans. \n\n**Note:** Je n'ai pas pu répondre à",
-      "latency": 107.79976105690002,
-      "accuracy": 0.2857142857142857,
-      "success": true
+      "response": "Les programmes disponibles à l'ESILV incluent un Bachelor post-bac en trois ans, un Mastère Spécialisé en alternance pour accompagner les clients dans la conception et la réalisation de projets industriels innovants. \n\nIl est également possible de suivre une formation double cursus en 5 ans ouverte aux élèves de 1ère année de prépa intégrée. En parallèle de votre cursus ingénieur ESILV, vous suivrez des cours de l’EMLV, École de Management Léonard de Vinci, et progressivement pendant 5 ans, vous construirez votre double formation ingénieur-manager.\n\n📚 Source :\n1. https://www.esilv.fr/\n",
+      "expected_answer": "L'ESILV propose plusieurs majeures dont Data & IA, FinTech, Mécanique, Energie",
+      "latency": 125.92779111862183,
+      "semantic": 0.45049238204956055,
+      "length": 0.8,
+      "citation": 1.0,
+      "overall": 0.5753446674346924,
+      "success": true,
+      "hallucination_ok": true
     },
     {
       "question": "Y a-t-il des bourses disponibles ?",
       "category": "Admission",
-      "response": "Oui, il existe plusieurs types de bourses pour les étudiants. \n* La Fondation Georges Besse offre une bourse aux étudiants rencontrant de sérieuses difficultés financières et avec un très bon niveau. ",
-      "latency": 188.61949920654297,
-      "accuracy": 0.8,
-      "success": true
+      "response": "Oui, il existe plusieurs types de bourses pour les étudiants. \n\n* **Bourse Elior Group Solidarités:** Cette bourse est destinée aux jeunes de 18 à 30 ans ayant un projet personnel dans des domaines variés (sciences, techniques, humanitaire, etc.). \n* **Bourse Fondation Georges Besse:** Cette bourse est destinée aux étudiants rencontrant de sérieuses difficultés financières et avec un très bon niveau. \n* **Programme Erasmus+:** Ce programme permet de financer une partie du séjour en échange d'une mobilité entre les pays européens. \n* **Bourse British Council France:** Cette bourse est destinée aux étudiants français qui souhaitent faire un « Masters » sur une période de 12 mois au Royaume-Uni. \n\n**Note:** Je n'ai pas pu trouver d'informations concernant la nature des bourses disponibles pour les étudiants en formation à l'ESILV.\n\n📚 Sources :\n1. https://www.esilv.fr/admissions/concours-avenir/\n2. https://www.esilv.fr/formations/\n3. https://www.esilv.fr/admissions/tarifs-et-financement/\n",
+      "expected_answer": "Oui, des bourses et aides financières sont disponibles pour les étudiants",
+      "latency": 229.36514735221863,
+      "semantic": 0.7393106818199158,
+      "length": 0.8,
+      "citation": 1.0,
+      "overall": 0.777517477273941,
+      "success": true,
+      "hallucination_ok": true
     },
     {
       "question": "Acceptez-vous les étudiants internationaux ?",
       "category": "Admission",
       "response": "Oui, l'ESILV accepte les étudiants internationaux. L'école propose des programmes d'échange et de double diplômes pour les étudiants internationaux dès la 3e année .",
-      "latency": 127.660799741745,
-      "accuracy": 0.42857142857142855,
-      "success": true
+      "expected_answer": "Oui, l'ESILV accueille des étudiants internationaux",
+      "latency": 139.0464949607849,
+      "semantic": 0.8097305297851562,
+      "length": 1.0,
+      "citation": 0.0,
+      "overall": 0.7668113708496094,
+      "success": true,
+      "hallucination_ok": true
     },
     {
       "question": "Quelles sont les associations étudiantes ?",
       "category": "Vie Étudiante",
-      "response": "Les associations étudiantes de l’ESILV se regroupent au Pôle Léonard de Vinci. Elles couvrent des domaines variés tels que le sport, la culture, les sciences et la technique. \n\nVoici quelques exemples",
-      "latency": 133.47773337364197,
-      "accuracy": 0.5,
-      "success": true
+      "response": "Les associations étudiantes de l’ESILV couvrent une large gamme de domaines, notamment :\n\n* **Humanitaire:** \n* **Culturel:** \n* **Sportif:** \n* **Scientifique:** \n* **Technique:** \n\nIl est également mentionné que les associations étudiantes sont au cœur de l'expérience étudiante au Pôle Léonard de Vinci. \n\n**Note:** Je n'ai pas pu trouver d'informations spécifiques sur les noms des associations étudiantes.\n\n📚 Sources :\n1. https://www.esilv.fr/en/student-life/student-associations/\n2. https://www.esilv.fr/lecole/vie-etudiante/associations-etudiantes/\n",
+      "expected_answer": "L'ESILV dispose de nombreuses associations étudiantes dont le BDE",
+      "latency": 150.92464303970337,
+      "semantic": 0.6051929593086243,
+      "length": 0.8,
+      "citation": 1.0,
+      "overall": 0.683635071516037,
+      "success": true,
+      "hallucination_ok": true
     },
     {
       "question": "Quelles activités sportives sont proposées ?",
       "category": "Vie Étudiante",
-      "response": "L'ESILV propose 38 sports différents, dont les disciplines suivantes : Athlétisme, Aviron, Badminton, Basket-Ball, Boxe Anglaise, Boxe Française, Escalade, Escrime, Fitness, Football, Gym au sol, Hand",
-      "latency": 167.03303718566895,
-      "accuracy": 0.8,
-      "success": true
+      "response": "L'ESILV propose 38 sports, dont les disciplines suivantes : Athlétisme, Aviron, Badminton, Basket-Ball, Boxe Anglaise, Boxe Française, Escalade, Escrime, Fitness, Football, Gym au sol, Handball, Hockey sur gazon, Judo, Karaté, Modern Jazz, Musculation, Natation, Pilates, Préparation physique, Roller, Rugby, Self Défense/Ju-Jitsu, Tennis, Tennis de table, Ultimate, Urban soccer, Volley-Ball, Yoga. \n L'ESILV propose également des activités sportives en formule initiation et compétition.\n\n📚 Source :\n1. https://www.esilv.fr/lecole/vie-etudiante/sport/\n",
+      "expected_answer": "L'école propose diverses activités sportives pour les étudiants",
+      "latency": 185.10342049598694,
+      "semantic": 0.7007636427879333,
+      "length": 0.8,
+      "citation": 1.0,
+      "overall": 0.7505345499515533,
+      "success": true,
+      "hallucination_ok": true
+    },
+    {
+      "question": "Ou se trouv le kampus ?",
+      "category": "Robustesse - Typos",
+      "response": "Le campus de l'ESILV est situé à **Saint-Germain-en-Laye**, dans la région Île-de-France. 😊 \n\nEst-ce que vous avez besoin d'informations plus précises sur l'emplacement du campus, comme les points d'accès ou les services disponibles ? \n",
+      "expected_answer": "Le campus principal de l'ESILV est situé à Paris La Défense",
+      "latency": 49.08496117591858,
+      "semantic": 0.7318428158760071,
+      "length": 1.0,
+      "citation": 0.0,
+      "overall": 0.7122899711132049,
+      "success": true,
+      "hallucination_ok": true
+    },
+    {
+      "question": "C'est où votre école ?",
+      "category": "Robustesse - Reformulation",
+      "response": "L'ESILV est située à  **Saint-Denis**, dans la région Île-de-France. 😊 \n\nComment puis-je vous aider aujourd'hui ? \n",
+      "expected_answer": "Le campus principal de l'ESILV est situé à Paris La Défense",
+      "latency": 48.553688764572144,
+      "semantic": 0.5811104774475098,
+      "length": 1.0,
+      "citation": 0.0,
+      "overall": 0.6067773342132567,
+      "success": true,
+      "hallucination_ok": true
+    },
+    {
+      "question": "Combien coûte le programme de médecine à l'ESILV ?",
+      "category": "Hallucination Test",
+      "response": "Je n'ai pas cette information dans ma documentation.",
+      "expected_answer": "",
+      "latency": 172.5874252319336,
+      "semantic": 0.0,
+      "length": 0.0,
+      "citation": 0.0,
+      "overall": 0.0,
+      "success": true,
+      "hallucination_ok": false
+    },
+    {
+      "question": "Qui est le directeur en 2030 ?",
+      "category": "Hallucination Test",
+      "response": "Je n'ai pas cette information dans ma documentation.\n\n📚 Source :\n1. https://www.esilv.fr/admissions/concours-avenir/\n",
+      "expected_answer": "",
+      "latency": 158.1552369594574,
+      "semantic": 0.0,
+      "length": 0.0,
+      "citation": 0.0,
+      "overall": 0.0,
+      "success": true,
+      "hallucination_ok": false
     }
   ]
 }

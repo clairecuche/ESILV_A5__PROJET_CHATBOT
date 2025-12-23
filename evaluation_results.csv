@@ -1,19 +1,70 @@
-question,category,response,latency,accuracy,success
-Où se trouve le campus principal ?,Localisation,Le campus principal de l'ESILV est situé à Paris-La Défense.,152.51032137870789,1.0,True
-Qui est le directeur de l'esilv ?,Administration,Le directeur de l'ESILV est Pascal Pinot .,168.74053764343262,1.0,True
-Quelle est la durée du cursus ingénieur ?,Cursus,La durée du cursus ingénieur à l'ESILV est de 5 ans . Les élèves réalisent des projets concrets sur les 5 années du cursus.,177.14924478530884,1.0,True
-Existe-t-il un double diplôme ingénieur-manager ?,Programmes,"Oui, il existe un double diplôme ingénieur-manager. 
-Il s'agit d'un programme unique qui permet aux étudiants de combiner une formation en ingénierie avec une formation en management à l'ESILV.
+question,category,response,expected_answer,latency,semantic,length,citation,overall,success,hallucination_ok
+Où se trouve le campus principal ?,Localisation,Le campus principal de l'ESILV est situé à Paris-La Défense.,Le campus principal de l'ESILV est situé à Paris La Défense,163.54819464683533,0.9880409240722656,1.0,0.0,0.8916286468505858,True,True
+Qui est le directeur de l'esilv ?,Administration,Le directeur de l'ESILV est Pascal Pinot.,Pascal Pinot est le directeur de l'ESILV,163.30751085281372,0.9827422499656677,1.0,0.0,0.8879195749759674,True,True
+Quelle est la durée du cursus ingénieur ?,Cursus,Le cursus ingénieur à l'ESILV dure 5 ans . Les élèves réalisent des projets concrets tout au long de leur cursus afin de stimuler leurs compétences et capacités de futur ingénieur.,Le cursus ingénieur à l'ESILV dure 5 ans,188.45399975776672,0.8249787092208862,1.0,0.0,0.7774850964546203,True,True
+Existe-t-il un double diplôme ingénieur-manager ?,Programmes,"Oui, il existe un double diplôme ingénieur-manager . Ce programme est ouvert aux élèves de 1ère année du cursus ingénieur de l’ESILV sur le campus de Paris La Défense. 
 
-📚 Sou",144.29574036598206,0.8,True
-Y a-t-il un programme en Data Science ?,Programmes,"Oui, l'ESILV propose un programme en Data Science . Le programme est axé sur la collecte, la modélisation et le stockage de données, ainsi que leur analyse et interprétation.",133.43408346176147,1.0,True
-Quels sont les programmes disponibles ?,Programmes,"Les programmes disponibles à l'ESILV incluent un Bachelor post-bac en trois ans, un programme de formation en alternance en deux ans et un double cursus en 5 ans. 
+**Note:** Je n'ai pas pu trouver d'informations supplémentaires sur ce programme dans les documents fournis.
 
-**Note:** Je n'ai pas pu répondre à",107.79976105690002,0.2857142857142857,True
+📚 Source :
+1. https://www.esilv.fr/formations/double-diplome-ingenieur-manager/
+","Oui, l'ESILV propose un double diplôme ingénieur-manager",166.40113735198975,0.8451729416847229,1.0,1.0,0.891621059179306,True,True
+Y a-t-il un programme en Data Science ?,Programmes,"Oui, l'ESILV propose un programme de Data Science . Le programme se compose d'une spécialisation ""Data & Intelligence Artificielle"" et inclut des modules sur la machine learning, le deep learning, les algorithmes et outils de data science, ainsi que des projets d'intelligence artificielle.","Oui, l'ESILV propose une spécialisation en Data Science et Intelligence Artificielle",150.6230273246765,0.8162987232208252,1.0,0.0,0.7714091062545776,True,True
+Quels sont les programmes disponibles ?,Programmes,"Les programmes disponibles à l'ESILV incluent un Bachelor post-bac en trois ans, un Mastère Spécialisé en alternance pour accompagner les clients dans la conception et la réalisation de projets industriels innovants. 
+
+Il est également possible de suivre une formation double cursus en 5 ans ouverte aux élèves de 1ère année de prépa intégrée. En parallèle de votre cursus ingénieur ESILV, vous suivrez des cours de l’EMLV, École de Management Léonard de Vinci, et progressivement pendant 5 ans, vous construirez votre double formation ingénieur-manager.
+
+📚 Source :
+1. https://www.esilv.fr/
+","L'ESILV propose plusieurs majeures dont Data & IA, FinTech, Mécanique, Energie",125.92779111862183,0.45049238204956055,0.8,1.0,0.5753446674346924,True,True
 Y a-t-il des bourses disponibles ?,Admission,"Oui, il existe plusieurs types de bourses pour les étudiants. 
-* La Fondation Georges Besse offre une bourse aux étudiants rencontrant de sérieuses difficultés financières et avec un très bon niveau. ",188.61949920654297,0.8,True
-Acceptez-vous les étudiants internationaux ?,Admission,"Oui, l'ESILV accepte les étudiants internationaux. L'école propose des programmes d'échange et de double diplômes pour les étudiants internationaux dès la 3e année .",127.660799741745,0.42857142857142855,True
-Quelles sont les associations étudiantes ?,Vie Étudiante,"Les associations étudiantes de l’ESILV se regroupent au Pôle Léonard de Vinci. Elles couvrent des domaines variés tels que le sport, la culture, les sciences et la technique. 
 
-Voici quelques exemples",133.47773337364197,0.5,True
-Quelles activités sportives sont proposées ?,Vie Étudiante,"L'ESILV propose 38 sports différents, dont les disciplines suivantes : Athlétisme, Aviron, Badminton, Basket-Ball, Boxe Anglaise, Boxe Française, Escalade, Escrime, Fitness, Football, Gym au sol, Hand",167.03303718566895,0.8,True
+* **Bourse Elior Group Solidarités:** Cette bourse est destinée aux jeunes de 18 à 30 ans ayant un projet personnel dans des domaines variés (sciences, techniques, humanitaire, etc.). 
+* **Bourse Fondation Georges Besse:** Cette bourse est destinée aux étudiants rencontrant de sérieuses difficultés financières et avec un très bon niveau. 
+* **Programme Erasmus+:** Ce programme permet de financer une partie du séjour en échange d'une mobilité entre les pays européens. 
+* **Bourse British Council France:** Cette bourse est destinée aux étudiants français qui souhaitent faire un « Masters » sur une période de 12 mois au Royaume-Uni. 
+
+**Note:** Je n'ai pas pu trouver d'informations concernant la nature des bourses disponibles pour les étudiants en formation à l'ESILV.
+
+📚 Sources :
+1. https://www.esilv.fr/admissions/concours-avenir/
+2. https://www.esilv.fr/formations/
+3. https://www.esilv.fr/admissions/tarifs-et-financement/
+","Oui, des bourses et aides financières sont disponibles pour les étudiants",229.36514735221863,0.7393106818199158,0.8,1.0,0.777517477273941,True,True
+Acceptez-vous les étudiants internationaux ?,Admission,"Oui, l'ESILV accepte les étudiants internationaux. L'école propose des programmes d'échange et de double diplômes pour les étudiants internationaux dès la 3e année .","Oui, l'ESILV accueille des étudiants internationaux",139.0464949607849,0.8097305297851562,1.0,0.0,0.7668113708496094,True,True
+Quelles sont les associations étudiantes ?,Vie Étudiante,"Les associations étudiantes de l’ESILV couvrent une large gamme de domaines, notamment :
+
+* **Humanitaire:** 
+* **Culturel:** 
+* **Sportif:** 
+* **Scientifique:** 
+* **Technique:** 
+
+Il est également mentionné que les associations étudiantes sont au cœur de l'expérience étudiante au Pôle Léonard de Vinci. 
+
+**Note:** Je n'ai pas pu trouver d'informations spécifiques sur les noms des associations étudiantes.
+
+📚 Sources :
+1. https://www.esilv.fr/en/student-life/student-associations/
+2. https://www.esilv.fr/lecole/vie-etudiante/associations-etudiantes/
+",L'ESILV dispose de nombreuses associations étudiantes dont le BDE,150.92464303970337,0.6051929593086243,0.8,1.0,0.683635071516037,True,True
+Quelles activités sportives sont proposées ?,Vie Étudiante,"L'ESILV propose 38 sports, dont les disciplines suivantes : Athlétisme, Aviron, Badminton, Basket-Ball, Boxe Anglaise, Boxe Française, Escalade, Escrime, Fitness, Football, Gym au sol, Handball, Hockey sur gazon, Judo, Karaté, Modern Jazz, Musculation, Natation, Pilates, Préparation physique, Roller, Rugby, Self Défense/Ju-Jitsu, Tennis, Tennis de table, Ultimate, Urban soccer, Volley-Ball, Yoga. 
+ L'ESILV propose également des activités sportives en formule initiation et compétition.
+
+📚 Source :
+1. https://www.esilv.fr/lecole/vie-etudiante/sport/
+",L'école propose diverses activités sportives pour les étudiants,185.10342049598694,0.7007636427879333,0.8,1.0,0.7505345499515533,True,True
+Ou se trouv le kampus ?,Robustesse - Typos,"Le campus de l'ESILV est situé à **Saint-Germain-en-Laye**, dans la région Île-de-France. 😊 
+
+Est-ce que vous avez besoin d'informations plus précises sur l'emplacement du campus, comme les points d'accès ou les services disponibles ? 
+",Le campus principal de l'ESILV est situé à Paris La Défense,49.08496117591858,0.7318428158760071,1.0,0.0,0.7122899711132049,True,True
+C'est où votre école ?,Robustesse - Reformulation,"L'ESILV est située à  **Saint-Denis**, dans la région Île-de-France. 😊 
+
+Comment puis-je vous aider aujourd'hui ? 
+",Le campus principal de l'ESILV est situé à Paris La Défense,48.553688764572144,0.5811104774475098,1.0,0.0,0.6067773342132567,True,True
+Combien coûte le programme de médecine à l'ESILV ?,Hallucination Test,Je n'ai pas cette information dans ma documentation.,,172.5874252319336,0.0,0.0,0.0,0.0,True,False
+Qui est le directeur en 2030 ?,Hallucination Test,"Je n'ai pas cette information dans ma documentation.
+
+📚 Source :
+1. https://www.esilv.fr/admissions/concours-avenir/
+",,158.1552369594574,0.0,0.0,0.0,0.0,True,False
